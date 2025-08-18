@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Degen Capital, LLC</title>
+  <meta name="description" content="Degen Capital, LLC — Opportunistic • Disciplined • Collaborative. Embracing complexity to capture alpha" />
+  <meta name="theme-color" content="#0b0d12" />
+  <style>
+    :root{
+      --bg:#0b0d12;         /* deep blue‑black */
+      --text:#e9eaee;       /* off‑white */
+      --muted:#b7bcc9;      /* muted gray */
+      --line:#1a1f2b;       /* hairline */
+      --overlay:rgba(5,7,12,.3); /* video darkener */
+      --accent:#e9eaee;
+      --maxw:1080px;
+      --pad: clamp(16px, 4vw, 40px);
+      --lh: 1.4;
+      --tsm: .02em;
+    }
+
+    /* Reset-ish */
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: Palatino, "Palatino Linotype", "Book Antiqua", serif;
+      background:var(--bg);
+      color:var(--text);
+      line-height:var(--lh);
+      -webkit-font-smoothing:antialiased;
+      text-rendering:optimizeLegibility;
+    }
+
+    /* Background video */
+    .bg{
+      position:fixed;
+      inset:0;
+      overflow:hidden;
+      z-index:-2;
+    }
+    .bg video{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      filter:saturate(100%) contrast(105%) brightness(100%);
+      pointer-events:none;
+    }
+    .bg::after{
+      content:"";
+      position:absolute; inset:0;
+      background:
+        linear-gradient(to bottom, rgba(0,0,0,.00) 0%, rgba(0,0,0,.05) 50%, rgba(0,0,0,.10) 100%),
+        var(--overlay);
+      z-index:1;
+    }
+    /* Respect reduced motion: swap to still image */
+    @media (prefers-reduced-motion: reduce){
+      .bg video{ display:none; }
+      .bg{
+        background:
+          linear-gradient(to bottom, rgba(0,0,0,.35), rgba(0,0,0,.75)),
+          url("assets/nyc-skyline.jpg") center/cover no-repeat fixed;
+      }
+    }
+
+    header{
+      position:sticky; top:0;
+      display:flex; align-items:center; justify-content:space-between;
+      padding: 18px var(--pad);
+      border-bottom:1px solid color-mix(in oklab, var(--line), transparent 35%);
+      backdrop-filter: blur(6px);
+      background: color-mix(in oklab, var(--bg), transparent 70%);
+    }
+
+    .brand{
+      display:flex; align-items:center; gap:16px;
+      text-decoration:none; color:inherit;
+    }
+    .wordmark{
+      letter-spacing:.12em;
+      font-weight:600;
+      font-size:14px;
+      line-height:2;
+      text-transform:uppercase;
+      opacity:.97;
+    }
+    .subtle{
+      color:var(--muted);
+      font-size:12px;
+      letter-spacing:.2em;
+      text-transform:uppercase;
+      margin-top:4px;
+      display:block;
+    }
+
+    nav a{
+      color:var(--text);
+      text-decoration:none;
+      font-size:14px;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      padding:8px 10px;
+      border-radius:4px;
+      opacity:.9;
+    }
+    nav a:hover{ background:rgba(255,255,255,.06) }
+
+    main{
+      min-height:calc(100dvh - 72px);
+      display:grid;
+      place-items:center;
+      padding: clamp(40px, 8vw, 120px) var(--pad) 80px;
+    }
+    .hero{
+      width:100%;
+      max-width:var(--maxw);
+      margin:0 auto;
+      text-align:center;
+    }
+    .kicker{
+      font-size:12px;
+      letter-spacing:.28em;
+      text-transform:uppercase;
+      color:var(--muted);
+      margin-bottom:18px;
+    }
+    h1{
+      font-size: clamp(28px, 5vw, 54px);
+      margin:0 0 14px 0;
+      line-height:2.0;
+      letter-spacing:var(--tsm);
+      font-weight:650;
+    }
+    .lede{
+      font-size: clamp(16px, 2.2vw, 20px);
+      color: color-mix(in oklab, var(--text), #ffffff 0%);
+      max-width: 900px;
+      margin: 0 auto 26px auto;
+      opacity:.96;
+    }
+    .meta{
+      font-size:13px;
+      line-height: 2;
+      color:var(--muted);
+      letter-spacing:.04em;
+    }
+
+    .pillrow{
+      display:flex; flex-wrap:wrap; justify-content:center; gap:10px;
+      margin:24px 0 10px 0;
+    }
+    .pill{
+      border:1px solid color-mix(in oklab, var(--text), transparent 70%);
+      padding:8px 12px; border-radius:999px;
+      font-size:12px; letter-spacing:.06em; text-transform:uppercase;
+      color:var(--muted);
+      background: color-mix(in oklab, var(--bg), transparent 65%);
+      backdrop-filter: blur(4px);
+    }
+
+    footer{
+      border-top:1px solid color-mix(in oklab, var(--line), transparent 35%);
+      padding: 18px var(--pad) 26px;
+      text-align:center;
+      color:var(--muted);
+      font-size:12px;
+      letter-spacing:.04em;
+      background: color-mix(in oklab, var(--bg), transparent 70%);
+      backdrop-filter: blur(6px);
+    }
+    a.link{ color:var(--text); opacity:.9; text-decoration:none; border-bottom:1px solid rgba(255,255,255,.25); }
+    a.link:hover{ opacity:1; border-bottom-color:rgba(255,255,255,.5); }
+
+    /* Small screens: compress header spacing */
+    @media (max-width: 480px){
+      .wordmark{ display:none; } /* keep only the monogram for ultra-small */
+    }
+
+    /* New sections styling */
+    section.section {
+      padding: 60px var(--pad);
+      max-width: var(--maxw);
+      margin: 0 auto;
+    }
+    .container.thin {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .split {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 40px;
+      margin-top: 20px;
+    }
+    .split > div {
+      flex: 1;
+      min-width: 260px;
+    }
+    .bullets {
+      list-style: disc;
+      padding-left: 20px;
+    }
+    
+    .btn {
+      display: inline-block;
+      padding: 6px 14px;
+      border: 1px solid var(--text);
+      border-radius: 4px;
+      font-size: 0.9em;
+      text-decoration: none;
+    }
+    .btn--accent {
+      background: #000000;
+      color: #ffffff;
+    }
+    .btn--accent:hover {
+      background: #222222;
+    }
+
+    .help {
+      font-size: 0.9em;
+      color: var(--muted);
+      margin-top: 10px;
+    }
+
+  </style>
+</head>
+<body>
+  <!-- Background -->
+  <div class="bg" aria-hidden="true">
+    <video autoplay muted loop playsinline preload="metadata" poster="assets/nyc-skyline.jpg">
+      <source src="assets/nyc-night-loop.mp4" type="video/mp4" />
+    </video>
+  </div>
+
+  <!-- Header -->
+  <header>
+    <a class="brand" href="#" aria-label="Degen Capital, LLC Home">
+      <!-- Minimal monogram logo (inline SVG). You can also save this block as degen-logo.svg -->
+      <svg width="34" height="34" viewBox="0 0 64 64" role="img" aria-labelledby="logoTitle logoDesc" fill="none">
+        <title id="logoTitle">Degen Capital Monogram</title>
+        <desc id="logoDesc">Interlocking D and C inside a rounded square</desc>
+        <rect x="1.5" y="1.5" width="61" height="61" rx="9" stroke="currentColor" stroke-width="3"/>
+        <!-- D -->
+        <path d="M18 16h10c10 0 18 8 18 16s-8 16-18 16H18V16z"
+              stroke="currentColor" stroke-width="3" fill="none" stroke-linejoin="round"/>
+        <!-- C -->
+        <path d="M45 20.5c-3.5-3.5-7.5-5.5-12.5-5.5-9.5 0-17 7.5-17 17s7.5 17 17 17c5 0 9-2 12.5-5.5"
+              stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round"/>
+      </svg>
+      <div>
+        <div class="wordmark">Degen&nbsp;Capital</div>
+        <span class="subtle">LLC</span>
+      </div>
+    </a>
+    
+    <nav aria-label="Primary">
+      <a href="#philosophy">Philosophy</a>
+      <a href="#login">Login</a>
+      <a href="mailto:contact@degencapital.com" aria-label="Email Degen Capital">Contact</a>
+    </nav>
+
+  </header>
+
+  <!-- Hero -->
+  <main>
+    <section class="hero" aria-labelledby="headline">
+      <div class="kicker">Opportunistic • Disciplined • Collaborative</div>
+      <h1 id="headline">Embracing complexity to capture alpha</h1>
+      <p class="lede">
+        We invest across public and private equity and credit, in pursuit of upside convexity paired with downside protection.
+      </p>
+      <div class="pillrow" role="list" aria-label="Sectors">
+        <span class="pill" role="listitem">Consumer</span>
+        <span class="pill" role="listitem">Technology</span>
+        <span class="pill" role="listitem">Industrial</span>
+        <span class="pill" role="listitem">Business Services</span>
+      </div>
+      <div class="meta">Established 2020 • New York</div>
+    </section>
+  </main>
+
+
+    <!-- PHILOSOPHY -->
+    <section id="philosophy" class="section" aria-labelledby="philosophy-h">
+      <div class="container thin">
+        <h2 id="philosophy-h">Investing Philosophy</h2>
+        <p class="lead">We are long‑term fundamental value investors.</p>
+        <div class="split">
+          <div>
+            <h3>Core Tenets</h3>
+            <ul class="bullets">
+              <li>Intrinsic value &amp; margin of safety.</li>
+              <li>Business quality &amp; durable moats.</li>
+              <li>Rational, aligned management &amp; governance.</li>
+              <li>Patience &amp; concentration; let winners compound.</li>
+            </ul>
+          </div>
+          <div>
+            <h3>Decision Rules</h3>
+            <ul class="bullets">
+              <li>Asymmetric risk‑reward.</li>
+              <li>Prefer a fair price for a great business.</li>
+              <li>Multi‑year horizon; low turnover; tax‑aware.</li>
+              <li>Exit on thesis break or superior alternatives.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- INVESTOR LOGIN -->
+    <section id="login" class="section" aria-labelledby="login-h">
+      <div class="container thin" style="text-align:center;">
+        <h2 id="login-h">Investor Login</h2>
+        <p class="lead">Authorized investors may access reporting via the secure portal.</p>
+        <p><a class="btn btn--accent" href="https://investor.degencapital.com" target="_blank" rel="noopener">Proceed to Secure Portal</a></p>
+        <p class="help">Need access? Contact <a href="mailto:ir@degencapital.com">ir@degencapital.com</a>.</p>
+      </div>
+    </section>
+
+  <footer>
+    For qualified investors only. Nothing herein constitutes an offer to sell or a solicitation to buy any security.
+    <br />
+    © <span id="y"></span> Degen Capital, LLC. All rights reserved.
+    <script>document.getElementById('y').textContent = new Date().getFullYear();</script>
+  </footer>
+
+  <noscript>
+    <!-- Fallback if JS is disabled -->
+    <style>.bg{background:url("assets/nyc-skyline.jpg") center/cover no-repeat fixed}</style>
+  </noscript>
+</body>
+</html>
