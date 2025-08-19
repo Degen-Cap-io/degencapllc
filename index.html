@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Degen Capital, LLC</title>
-  <meta name="description" content="Degen Capital, LLC — Opportunistic • Disciplined • Collaborative. Embracing complexity to capture alpha" />
+  <meta name="description" content="Degen Capital, LLC — Opportunistic • Disciplined • Contrarian. Embracing complexity to capture alpha" />
   <meta name="theme-color" content="#0b0d12" />
   <style>
     :root{
@@ -12,12 +12,14 @@
       --text:#e9eaee;       /* off‑white */
       --muted:#b7bcc9;      /* muted gray */
       --line:#1a1f2b;       /* hairline */
-      --overlay:rgba(5,7,12,.3); /* video darkener */
+      --overlay:rgba(5,7,12,.35); /* video darkener (slightly stronger on mobile) */
       --accent:#e9eaee;
       --maxw:1080px;
-      --pad: clamp(16px, 4vw, 40px);
-      --lh: 1.4;
+      --pad: clamp(16px, 5vw, 40px);
+      --lh: 1.45;
       --tsm: .02em;
+      --radius: 12px;
+      --nav-h: 60px; /* compact, mobile-first */
     }
 
     /* Reset-ish */
@@ -31,31 +33,24 @@
       line-height:var(--lh);
       -webkit-font-smoothing:antialiased;
       text-rendering:optimizeLegibility;
+      -webkit-tap-highlight-color: transparent;
+      overflow-x:hidden; /* prevent mobile horizontal scroll */
     }
 
     /* Background video */
-    .bg{
-      position:fixed;
-      inset:0;
-      overflow:hidden;
-      z-index:-2;
-    }
+    .bg{ position:fixed; inset:0; overflow:hidden; z-index:-2; }
     .bg video{
-      width:100%;
-      height:100%;
-      object-fit:cover;
-      filter:saturate(100%) contrast(105%) brightness(100%);
+      width:100%; height:100%; object-fit:cover;
+      filter:saturate(100%) contrast(105%) brightness(95%);
       pointer-events:none;
     }
     .bg::after{
-      content:"";
-      position:absolute; inset:0;
+      content:""; position:absolute; inset:0;
       background:
-        linear-gradient(to bottom, rgba(0,0,0,.00) 0%, rgba(0,0,0,.05) 50%, rgba(0,0,0,.10) 100%),
+        linear-gradient(to bottom, rgba(0,0,0,.00) 0%, rgba(0,0,0,.10) 40%, rgba(0,0,0,.20) 100%),
         var(--overlay);
       z-index:1;
     }
-    /* Respect reduced motion: swap to still image */
     @media (prefers-reduced-motion: reduce){
       .bg video{ display:none; }
       .bg{
@@ -65,166 +60,84 @@
       }
     }
 
+    /* Header / mobile-first navigation */
     header{
-      position:sticky; top:0;
+      position:sticky; top:0; z-index:10;
       display:flex; align-items:center; justify-content:space-between;
-      padding: 18px var(--pad);
+      padding: env(safe-area-inset-top) var(--pad) 8px var(--pad);
+      height: var(--nav-h);
       border-bottom:1px solid color-mix(in oklab, var(--line), transparent 35%);
       backdrop-filter: blur(6px);
-      background: color-mix(in oklab, var(--bg), transparent 70%);
+      background: color-mix(in oklab, var(--bg), transparent 60%);
+    }
+    .brand{ display:flex; align-items:center; gap:12px; text-decoration:none; color:inherit; min-width:0; }
+    .wordmark{ letter-spacing:.11em; font-weight:600; font-size:13px; line-height:1; text-transform:uppercase; opacity:.97; white-space:nowrap; }
+    .subtle{ color:var(--muted); font-size:11px; letter-spacing:.18em; text-transform:uppercase; display:block; margin-top:3px; }
+
+    /* Menu button (mobile) */
+    .menu-btn{ appearance:none; border:1px solid color-mix(in oklab, var(--text), transparent 70%); background: color-mix(in oklab, var(--bg), transparent 55%); color:var(--text); border-radius:10px; padding:8px 10px; line-height:0; display:flex; align-items:center; gap:8px; }
+    .menu-btn:focus-visible{ outline:2px solid #fff; outline-offset:2px; }
+    .menu-icon{ width:22px; height:22px; display:block; }
+
+    nav{ position:fixed; inset:auto 0 0 0; top:var(--nav-h); /* mobile drawer */
+         translate:0 -8px; opacity:0; pointer-events:none;
+         transition:opacity .2s ease, translate .2s ease;
+         padding: 10px var(--pad) max(12px, env(safe-area-inset-bottom));
+    }
+    .nav-panel{ display:grid; gap:10px; grid-template-columns:1fr 1fr 1fr; max-width:var(--maxw); margin:0 auto;
+                background: color-mix(in oklab, var(--bg), transparent 45%); backdrop-filter: blur(10px);
+                border: 1px solid color-mix(in oklab, var(--line), transparent 20%);
+                border-radius: var(--radius); padding: 12px; }
+    nav a{ color:var(--text); text-decoration:none; font-size:14px; letter-spacing:.08em; text-transform:uppercase; padding:12px 10px; border-radius:8px; text-align:center; display:block; }
+    nav a:active{ background:rgba(255,255,255,.08) }
+
+    /* open state */
+    .nav-open nav{ opacity:1; translate:0 0; pointer-events:auto; }
+    .nav-open .menu-btn[aria-expanded="false"]{ aria-expanded:true; }
+
+    /* Larger screens: inline nav */
+    @media (min-width: 820px){
+      .menu-btn{ display:none; }
+      nav{ position:static; inset:auto; translate:0; opacity:1; pointer-events:auto; padding:0; }
+      .nav-panel{ display:flex; gap:8px; background:transparent; border:0; padding:0; }
+      nav a{ padding:8px 10px; border-radius:6px; opacity:.9; }
+      nav a:hover{ background:rgba(255,255,255,.06) }
     }
 
-    .brand{
-      display:flex; align-items:center; gap:16px;
-      text-decoration:none; color:inherit;
-    }
-    .wordmark{
-      letter-spacing:.12em;
-      font-weight:600;
-      font-size:14px;
-      line-height:2;
-      text-transform:uppercase;
-      opacity:.97;
-    }
-    .subtle{
-      color:var(--muted);
-      font-size:12px;
-      letter-spacing:.2em;
-      text-transform:uppercase;
-      margin-top:4px;
-      display:block;
-    }
+    main{ min-height:calc(100svh - var(--nav-h)); display:grid; place-items:center; padding: clamp(32px, 8vw, 120px) var(--pad) 64px; }
+    .hero{ width:100%; max-width:var(--maxw); margin:0 auto; text-align:center; }
+    .kicker{ font-size:11px; letter-spacing:.26em; text-transform:uppercase; color:var(--muted); margin-bottom:14px; }
+    h1{ font-size: clamp(26px, 8vw, 54px); margin:0 0 12px 0; line-height:2; letter-spacing:var(--tsm); font-weight:650; }
+    .lede{ font-size: clamp(15px, 4.2vw, 19px); color: color-mix(in oklab, var(--text), #ffffff 0%); max-width: 880px; margin: 0 auto 22px auto; opacity:.96; }
+    .meta{ font-size:12px; line-height: 1.8; color:var(--muted); letter-spacing:.04em; }
+    .pillrow{ display:flex; flex-wrap:wrap; justify-content:center; gap:8px; margin:20px 0 6px 0; }
+    .pill{ border:1px solid color-mix(in oklab, var(--text), transparent 70%); padding:7px 10px; border-radius:999px; font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); background: color-mix(in oklab, var(--bg), transparent 65%); backdrop-filter: blur(4px); }
 
-    nav a{
-      color:var(--text);
-      text-decoration:none;
-      font-size:14px;
-      letter-spacing:.08em;
-      text-transform:uppercase;
-      padding:8px 10px;
-      border-radius:4px;
-      opacity:.9;
-    }
-    nav a:hover{ background:rgba(255,255,255,.06) }
-
-    main{
-      min-height:calc(100dvh - 72px);
-      display:grid;
-      place-items:center;
-      padding: clamp(40px, 8vw, 120px) var(--pad) 80px;
-    }
-    .hero{
-      width:100%;
-      max-width:var(--maxw);
-      margin:0 auto;
-      text-align:center;
-    }
-    .kicker{
-      font-size:12px;
-      letter-spacing:.28em;
-      text-transform:uppercase;
-      color:var(--muted);
-      margin-bottom:18px;
-    }
-    h1{
-      font-size: clamp(28px, 5vw, 54px);
-      margin:0 0 14px 0;
-      line-height:2.0;
-      letter-spacing:var(--tsm);
-      font-weight:650;
-    }
-    .lede{
-      font-size: clamp(16px, 2.2vw, 20px);
-      color: color-mix(in oklab, var(--text), #ffffff 0%);
-      max-width: 900px;
-      margin: 0 auto 26px auto;
-      opacity:.96;
-    }
-    .meta{
-      font-size:13px;
-      line-height: 2;
-      color:var(--muted);
-      letter-spacing:.04em;
-    }
-
-    .pillrow{
-      display:flex; flex-wrap:wrap; justify-content:center; gap:10px;
-      margin:24px 0 10px 0;
-    }
-    .pill{
-      border:1px solid color-mix(in oklab, var(--text), transparent 70%);
-      padding:8px 12px; border-radius:999px;
-      font-size:12px; letter-spacing:.06em; text-transform:uppercase;
-      color:var(--muted);
-      background: color-mix(in oklab, var(--bg), transparent 65%);
-      backdrop-filter: blur(4px);
-    }
-
-    footer{
-      border-top:1px solid color-mix(in oklab, var(--line), transparent 35%);
-      padding: 18px var(--pad) 26px;
-      text-align:center;
-      color:var(--muted);
-      font-size:12px;
-      letter-spacing:.04em;
-      background: color-mix(in oklab, var(--bg), transparent 70%);
-      backdrop-filter: blur(6px);
-    }
+    footer{ border-top:1px solid color-mix(in oklab, var(--line), transparent 35%); padding: 14px var(--pad) max(20px, calc(16px + env(safe-area-inset-bottom))); text-align:center; color:var(--muted); font-size:12px; letter-spacing:.04em; background: color-mix(in oklab, var(--bg), transparent 70%); backdrop-filter: blur(6px); }
     a.link{ color:var(--text); opacity:.9; text-decoration:none; border-bottom:1px solid rgba(255,255,255,.25); }
     a.link:hover{ opacity:1; border-bottom-color:rgba(255,255,255,.5); }
 
-    /* Small screens: compress header spacing */
-    @media (max-width: 480px){
-      .wordmark{ display:none; } /* keep only the monogram for ultra-small */
-    }
+    /* Sections */
+    section.section { padding: clamp(40px, 8vw, 60px) var(--pad); max-width: var(--maxw); margin: 0 auto; content-visibility:auto; contain-intrinsic-size: 1px 500px; }
+    .container.thin { max-width: 820px; margin: 0 auto; }
+    .split { display: grid; gap: 22px; grid-template-columns: 1fr; margin-top: 12px; }
+    .split > div { min-width: 0; }
+    @media (min-width: 720px){ .split{ grid-template-columns: 1fr 1fr; gap: 36px; } }
+    .bullets { list-style: disc; padding-left: 18px; }
 
-    /* New sections styling */
-    section.section {
-      padding: 60px var(--pad);
-      max-width: var(--maxw);
-      margin: 0 auto;
-    }
-    .container.thin {
-      max-width: 800px;
-      margin: 0 auto;
-    }
-    .split {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 40px;
-      margin-top: 20px;
-    }
-    .split > div {
-      flex: 1;
-      min-width: 260px;
-    }
-    .bullets {
-      list-style: disc;
-      padding-left: 20px;
-    }
-    
-    .btn {
-      display: inline-block;
-      padding: 6px 14px;
-      border: 1px solid var(--text);
-      border-radius: 4px;
-      font-size: 0.9em;
-      text-decoration: none;
-    }
-    .btn--accent {
-      background: #000000;
-      color: #ffffff;
-    }
-    .btn--accent:hover {
-      background: #222222;
-    }
+    .btn { display: inline-block; padding: 10px 16px; border: 1px solid var(--text); border-radius: 8px; font-size: 1rem; text-decoration: none; min-width: 44px; min-height: 44px; /* WCAG hit target */ }
+    .btn--accent { background: #000000; color: #ffffff; }
+    .btn--accent:hover { background: #222222; }
 
-    .help {
-      font-size: 0.9em;
-      color: var(--muted);
-      margin-top: 10px;
-    }
+    .help { font-size: 0.95em; color: var(--muted); margin-top: 10px; }
 
+    /* Micro-optimizations for very small phones */
+    @media (max-width: 380px){
+      .wordmark{ display:none; } /* keep only monogram */
+      .kicker{ letter-spacing:.22em; }
+      h1{ font-size: clamp(24px, 9vw, 48px); }
+      .lede{ font-size: clamp(14px, 4.6vw, 18px); }
+    }
   </style>
 </head>
 <body>
@@ -238,40 +151,45 @@
   <!-- Header -->
   <header>
     <a class="brand" href="#" aria-label="Degen Capital, LLC Home">
-      <!-- Minimal monogram logo (inline SVG). You can also save this block as degen-logo.svg -->
-      <svg width="34" height="34" viewBox="0 0 64 64" role="img" aria-labelledby="logoTitle logoDesc" fill="none">
+      <!-- Minimal monogram logo (inline SVG) -->
+      <svg width="32" height="32" viewBox="0 0 64 64" role="img" aria-labelledby="logoTitle logoDesc" fill="none">
         <title id="logoTitle">Degen Capital Monogram</title>
         <desc id="logoDesc">Interlocking D and C inside a rounded square</desc>
         <rect x="1.5" y="1.5" width="61" height="61" rx="9" stroke="currentColor" stroke-width="3"/>
-        <!-- D -->
-        <path d="M18 16h10c10 0 18 8 18 16s-8 16-18 16H18V16z"
-              stroke="currentColor" stroke-width="3" fill="none" stroke-linejoin="round"/>
-        <!-- C -->
-        <path d="M45 20.5c-3.5-3.5-7.5-5.5-12.5-5.5-9.5 0-17 7.5-17 17s7.5 17 17 17c5 0 9-2 12.5-5.5"
-              stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round"/>
+        <path d="M18 16h10c10 0 18 8 18 16s-8 16-18 16H18V16z" stroke="currentColor" stroke-width="3" fill="none" stroke-linejoin="round"/>
+        <path d="M45 20.5c-3.5-3.5-7.5-5.5-12.5-5.5-9.5 0-17 7.5-17 17s7.5 17 17 17c5 0 9-2 12.5-5.5" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round"/>
       </svg>
       <div>
         <div class="wordmark">Degen&nbsp;Capital</div>
         <span class="subtle">LLC</span>
       </div>
     </a>
-    
-    <nav aria-label="Primary">
-      <a href="#philosophy">Philosophy</a>
-      <a href="#login">Login</a>
-      <a href="mailto:contact@degencapital.com" aria-label="Email Degen Capital">Contact</a>
-    </nav>
 
+    <!-- Mobile menu button -->
+    <button class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="primaryNav">
+      <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <line x1="3" y1="6" x2="21" y2="6"></line>
+        <line x1="3" y1="12" x2="21" y2="12"></line>
+        <line x1="3" y1="18" x2="21" y2="18"></line>
+      </svg>
+      <span class="sr-only">Menu</span>
+    </button>
+
+    <nav id="primaryNav" aria-label="Primary">
+      <div class="nav-panel">
+        <a href="#philosophy">Philosophy</a>
+        <a href="#login">Login</a>
+        <a href="mailto:contact@degencapital.com" aria-label="Email Degen Capital">Contact</a>
+      </div>
+    </nav>
   </header>
 
   <!-- Hero -->
   <main>
     <section class="hero" aria-labelledby="headline">
-      <div class="kicker">Opportunistic • Disciplined • Collaborative</div>
+      <div class="kicker">Opportunistic • Disciplined • Contrarian</div>
       <h1 id="headline">Embracing complexity to capture alpha</h1>
-      <p class="lede">
-        We invest across public and private equity and credit, in pursuit of upside convexity paired with downside protection.
-      </p>
+      <p class="lede">We invest across public and private equity and credit, in pursuit of upside convexity.</p>
       <div class="pillrow" role="list" aria-label="Sectors">
         <span class="pill" role="listitem">Consumer</span>
         <span class="pill" role="listitem">Technology</span>
@@ -282,54 +200,71 @@
     </section>
   </main>
 
-
-    <!-- PHILOSOPHY -->
-    <section id="philosophy" class="section" aria-labelledby="philosophy-h">
-      <div class="container thin">
-        <h2 id="philosophy-h">Investing Philosophy</h2>
-        <p class="lead">We are long‑term fundamental value investors.</p>
-        <div class="split">
-          <div>
-            <h3>Core Tenets</h3>
-            <ul class="bullets">
-              <li>Intrinsic value &amp; margin of safety.</li>
-              <li>Business quality &amp; durable moats.</li>
-              <li>Rational, aligned management &amp; governance.</li>
-              <li>Patience &amp; concentration; let winners compound.</li>
-            </ul>
-          </div>
-          <div>
-            <h3>Decision Rules</h3>
-            <ul class="bullets">
-              <li>Asymmetric risk‑reward.</li>
-              <li>Prefer a fair price for a great business.</li>
-              <li>Multi‑year horizon; low turnover; tax‑aware.</li>
-              <li>Exit on thesis break or superior alternatives.</li>
-            </ul>
-          </div>
+  <!-- PHILOSOPHY -->
+  <section id="philosophy" class="section" aria-labelledby="philosophy-h">
+    <div class="container thin">
+      <h2 id="philosophy-h">Investing Philosophy</h2>
+      <p class="lead">As value investors, we employ rigorous bottom-up fundamental research.</p>
+      <div class="split">
+        <div>
+          <h3>Core Tenets</h3>
+          <ul class="bullets">
+            <li>Intrinsic value &amp; margin of safety.</li>
+            <li>Business quality &amp; durable moats.</li>
+            <li>Rational, aligned management &amp; governance.</li>
+            <li>Patience &amp; concentration; let winners compound.</li>
+          </ul>
+        </div>
+        <div>
+          <h3>Decision Rules</h3>
+          <ul class="bullets">
+            <li>Asymmetric risk‑reward.</li>
+            <li>Prefer a fair price for a great business.</li>
+            <li>Multi‑year horizon; low turnover; tax‑aware.</li>
+            <li>Exit on thesis break or superior alternatives.</li>
+          </ul>
         </div>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <!-- INVESTOR LOGIN -->
-    <section id="login" class="section" aria-labelledby="login-h">
-      <div class="container thin" style="text-align:center;">
-        <h2 id="login-h">Investor Login</h2>
-        <p class="lead">Authorized investors may access reporting via the secure portal.</p>
-        <p><a class="btn btn--accent" href="https://investor.degencapital.com" target="_blank" rel="noopener">Proceed to Secure Portal</a></p>
-        <p class="help">Need access? Contact <a href="mailto:ir@degencapital.com">ir@degencapital.com</a>.</p>
-      </div>
-    </section>
+  <!-- INVESTOR LOGIN -->
+  <section id="login" class="section" aria-labelledby="login-h">
+    <div class="container thin" style="text-align:center;">
+      <h2 id="login-h">Investor Login</h2>
+      <p class="lead">Authorized investors may access reporting via the secure portal.</p>
+      <p><a class="btn btn--accent" href="https://investor.degencapital.com" target="_blank" rel="noopener">Proceed to Secure Portal</a></p>
+      <p class="help">Need access? Contact <a href="mailto:ir@degencapital.com">ir@degencapital.com</a>.</p>
+    </div>
+  </section>
 
   <footer>
-    For qualified investors only. Nothing herein constitutes an offer to sell or a solicitation to buy any security.
-    <br />
+    For qualified investors only. Nothing herein constitutes an offer to sell or a solicitation to buy any security.<br />
     © <span id="y"></span> Degen Capital, LLC. All rights reserved.
-    <script>document.getElementById('y').textContent = new Date().getFullYear();</script>
   </footer>
 
+  <script>
+    // Year stamp
+    document.getElementById('y').textContent = new Date().getFullYear();
+
+    // Mobile menu toggle (accessibility-friendly)
+    const menuBtn = document.getElementById('menuBtn');
+    const html = document.documentElement;
+    const nav = document.getElementById('primaryNav');
+
+    function setOpen(open){
+      menuBtn.setAttribute('aria-expanded', open);
+      html.classList.toggle('nav-open', open);
+    }
+    menuBtn.addEventListener('click', () => setOpen(menuBtn.getAttribute('aria-expanded') !== 'true'));
+    document.addEventListener('keydown', (e) => { if(e.key === 'Escape') setOpen(false); });
+    // Close when clicking outside (mobile)
+    document.addEventListener('click', (e) => {
+      if(!nav.contains(e.target) && !menuBtn.contains(e.target)) setOpen(false);
+    });
+  </script>
+
   <noscript>
-    <!-- Fallback if JS is disabled -->
     <style>.bg{background:url("assets/nyc-skyline.jpg") center/cover no-repeat fixed}</style>
   </noscript>
 </body>
