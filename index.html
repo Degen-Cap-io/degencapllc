@@ -12,7 +12,7 @@
       --text:#e9eaee;
       --muted:#b7bcc9;
       --line:#1a1f2b;
-      --overlay:rgba(5,7,12,.3);
+      --overlay:rgba(5,7,12,.2);
       --accent:#e9eaee;
       --maxw:1080px;
       --pad: clamp(16px, 5vw, 40px);
@@ -24,11 +24,12 @@
       --top-pad: max(10px, env(safe-area-inset-top));
       /* Computed at runtime to the actual header height */
       --nav-visible-h: var(--nav-h);
+      /* shared size for menu button */
+      --btn-h: 40px;
     }
-    .logo{width: 32px; height: 32px; display: block; flex-shrink: 0;
-    }
-    .brand{gap: 10px; align-items:center;
-    }
+
+    .logo{width: 32px; height: 32px; display: block; flex-shrink: 0;}
+    .brand{gap: 10px; align-items:center;}
 
     *,*::before,*::after{ box-sizing:border-box; }
     html,body{ height:100%; }
@@ -56,7 +57,7 @@
       backdrop-filter: blur(8px);
       /* Fallback then color-mix */
       background: rgba(11,13,18,0.4);
-      background: color-mix(in oklab, var(--bg), transparent 60%);
+      background: color-mix(in oklab, var(--bg), transparent 80%);
       transform: translateY(-100%); opacity:0; pointer-events:none;
       transition: transform .2s ease, opacity .2s ease;
       border-bottom: 1px solid rgba(26,31,43,0.75);
@@ -73,69 +74,112 @@
     .wordmark{ letter-spacing:.11em; font-weight:600; font-size:13px; text-transform:uppercase; line-height:1; }
     .subtle{ color:var(--muted); font-size:11px; letter-spacing:.18em; text-transform:uppercase; display:block; margin-top:3px; }
 
-    /* Floating Menu button */
+    /* Floating Menu button — aligned with header vertically */
     .menu-fab{
       position:fixed;
-      top: var(--top-pad);
+      top: calc((var(--nav-visible-h) - var(--btn-h)) / 2);
       right: var(--pad);
       z-index: 30;
     }
     .menu-btn{
       appearance:none; border:0; cursor:pointer;
       display:inline-flex; align-items:center; justify-content:center;
-      width:40px; height:40px; border-radius:999px;
-      background: rgba(11,13,18,0.65);
-      background: color-mix(in oklab, var(--bg), transparent 35%);
+      width: var(--btn-h);
+      height: var(--btn-h);
+      border-radius:999px;
+      background: color-mix(in oklab, var(--bg), transparent 100%);
       color: var(--text); font-size:18px; line-height:1;
       backdrop-filter: blur(8px);
-      border: 1px solid rgba(26,31,43,0.9);
-      border: 1px solid color-mix(in oklab, var(--line), transparent 10%);
+      border: 1px solid color-mix(in oklab, var(--line), transparent 100%);
     }
     .menu-btn:hover{
-      background: rgba(11,13,18,0.8);
-      background: color-mix(in oklab, var(--bg), transparent 20%);
+      background: color-mix(in oklab, var(--bg), transparent 100%);
     }
     .menu-btn:focus-visible{ outline: 2px solid var(--focus); outline-offset: 2px; }
     .menu-btn[aria-expanded="true"]{
-      background: rgba(11,13,18,0.9);
-      background: color-mix(in oklab, var(--bg), transparent 10%);
+      background: color-mix(in oklab, var(--bg), transparent 100%);
     }
 
+    /* ========= NEW: Mobile dropdown anchored under the menu button ========= */
     nav{
-      position:fixed; inset:auto 0 0 0; top:var(--nav-visible-h);
-      translate:0 -8px; opacity:0; pointer-events:none;
-      transition:opacity .15s ease, translate .15s ease;
-      padding: 10px var(--pad) max(12px, env(safe-area-inset-bottom));
+      position:fixed;
+      top: calc(var(--nav-visible-h) + 8px);
+      right: var(--pad);
+      left: auto;
+      translate: 0 -6px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .18s ease, translate .18s ease;
+      padding: 0;
+      z-index: 40;
+      width: min(240px, 86vw);
     }
-    .nav-panel{
-      display:grid; gap:10px; grid-template-columns:1fr 1fr 1fr;
-      max-width:var(--maxw); margin:0 auto;
-      background: rgba(11,13,18,0.55);
-      background: color-mix(in oklab, var(--bg), transparent 45%);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(26,31,43,0.8);
-      border: 1px solid color-mix(in oklab, var(--line), transparent 20%);
-      border-radius: var(--radius);
-      padding: 12px;
-    }
-    nav a{
-      color:var(--text); text-decoration:none; font-size:14px;
-      letter-spacing:.08em; text-transform:uppercase;
-      padding:12px 10px; border-radius:8px; text-align:left; display:block; opacity:.9;
-    }
-    nav a:hover{ background:rgba(255,255,255,.06) }
-    html.nav-open nav{ opacity:1; translate:0 0; pointer-events:auto; }
 
-    @media (min-width: 820px){
-      .menu-fab{ display:none; }
-      nav{ position:static; inset:auto; translate:0; opacity:1; pointer-events:auto; padding:0; top:auto; }
-      .nav-panel{ display:flex; gap:8px; background:transparent; border:0; padding:0; backdrop-filter:none; }
-      nav a{ padding:8px 10px; border-radius:6px; }
+    .nav-panel{
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      background: color-mix(in oklab, var(--bg), transparent 50%);
+      backdrop-filter: blur(10px);
+      border: 1px solid color-mix(in oklab, var(--line), transparent 100%);
+      border-radius: 12px;
+      padding: 8px;
+      box-shadow:
+        0 6px 20px rgba(0,0,0,.35),
+        0 0 0 1px color-mix(in oklab, var(--line), transparent 70%) inset;
+      overflow: clip;
     }
+
+    /* Arrow pointer to the button */
+    .nav-panel::before{
+      content:"";
+      position:absolute;
+      top: -6px;
+      right: 18px;
+      width: 10px; height: 10px;
+      background: inherit;
+      border-left: 1px solid color-mix(in oklab, var(--line), transparent 18%);
+      border-top: 1px solid color-mix(in oklab, var(--line), transparent 18%);
+      transform: rotate(45deg);
+      backdrop-filter: inherit;
+    }
+
+    /* Links — compact, right-aligned for tidy rag under the button */
+    nav a{
+      color: var(--text);
+      text-decoration: none;
+      font-size: 13px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      padding: 6px 10px;
+      border-radius: 8px;
+      text-align: right;
+      opacity: 0;
+      transform: translateY(-6px);
+      transition:
+        opacity .22s ease,
+        transform .22s ease,
+        background-color .15s ease;
+    }
+    nav a:hover{ background: rgba(255,255,255,.06); }
+
+    /* Open state */
+    html.nav-open nav{
+      opacity: 1; translate: 0 0; pointer-events: auto;
+    }
+
+    /* Cascade: stagger the three items */
+    html.nav-open nav a:nth-child(1){ transition-delay: .15s; opacity:1; transform: translateY(0); }
+    html.nav-open nav a:nth-child(2){ transition-delay: .30s; opacity:1; transform: translateY(0); }
+    html.nav-open nav a:nth-child(3){ transition-delay: .45s; opacity:1; transform: translateY(0); }
+    html.nav-open nav a:nth-child(4){ transition-delay: .60s; opacity:1; transform: translateY(0); }
+
+    /* ===================================================================== */
 
     main{ min-height:calc(100svh - var(--nav-visible-h)); display:grid; place-items:center; padding: clamp(32px, 8vw, 120px) var(--pad) 0; }
     .hero{ width:100%; max-width:var(--maxw); margin:0 auto; text-align:left; }
-    .hero h1{ font-size: clamp(28px, 8vw, 56px); margin:0; line-height:0.9; font-weight:700; letter-spacing:-0.01em; }
+    .hero h1{ font-size: clamp(28px, 8vw, 60px); margin:0; line-height:0.9; font-weight:700; letter-spacing:-0.01em; }
     .hero h1 + h1{ margin-top:6px; }
     .lede{ font-size: clamp(9px, 4.2vw, 19px); color:var(--text); max-width: 720px; margin: 24px 0; opacity:.9; margin-left: 7px;}
 
@@ -146,7 +190,7 @@
     .bullets{ list-style:disc; padding-left:18px; }
 
     .btn{ display:inline-block; padding:10px 16px; border:1px solid var(--text); border-radius:8px; font-size:1rem; text-decoration:none; min-width:44px; min-height:44px; }
-    .btn--accent{ background:#101317; color:#fff; }
+    .btn--accent{ background:transparent; color:#fff; }
     .btn--accent:hover{ background:#1a1f27; }
 
     footer{
@@ -172,8 +216,43 @@
 
     /* Coarse pointer tweaks */
     @media (pointer:coarse){
-      .menu-btn{ width:48px; height:48px; }
+      :root{ --btn-h: 48px; }
       nav a{ padding:14px 12px; }
+    }
+
+    /* ===== Desktop: restore inline nav ===== */
+    @media (min-width: 820px){
+      .menu-fab{ display:none; }
+      nav{
+        position: static;
+        width: auto;
+        translate: 0;
+        opacity: 1;
+        pointer-events: auto;
+        padding: 0;
+        top: auto; right: auto;
+      }
+      .nav-panel{
+        position: static;
+        display: flex;
+        flex-direction: row;
+        gap: 8px;
+        background: transparent;
+        border: 0;
+        padding: 0;
+        box-shadow: none;
+      }
+      .nav-panel::before{ display:none; }
+      nav a{
+        text-align: left;
+        opacity: 1;
+        transform: none;
+        transition: background-color .15s ease;
+        padding: 8px 10px;
+        border-radius: 6px;
+        font-size: 14px;
+        letter-spacing: .08em;
+      }
     }
   </style>
 </head>
@@ -212,6 +291,7 @@
     <nav id="primaryNav" aria-label="Primary" role="dialog" aria-modal="true" aria-labelledby="menuBtn">
       <div class="nav-panel">
         <a href="#top">Home</a>
+        <a href="#about">About</a>
         <a href="#philosophy">Philosophy</a>
         <a href="#login">Login</a>
       </div>
@@ -222,8 +302,8 @@
   <main>
     <section class="hero">
       <h1>Embracing</h1>
-      <h1>complexity</h1>
-      <h1>to capture alpha</h1>
+      <h1>complexity to</h1>
+      <h1>capture alpha</h1>
       <p class="lede">since 2020.</p>
     </section>
   </main>
@@ -234,10 +314,24 @@
     </div>
   </section>
 
+  <section id="about" class="section">
+    <div class="container thin">
+      <h2>About Degen Capital</h2>
+      <p class="lead">Degen Capital is a niche investment manager specializing in alternative assets. We emphasize an opportunistic, value-oriented and risk-controlled approach to investing public and private equity and credit. Industries of focus include technology, industrial, energy, healthcare, and business services. To date, we have invested in excess of $500 million.</p>
+      <div class="split">
+    </div>
+  </section>
+
+  <section id="spacer-element" class="section" aria-hidden="true">
+    <div class="container thin">
+      <div style="height:200px;"></div>
+    </div>
+  </section>
+
   <section id="philosophy" class="section">
     <div class="container thin">
       <h2>Investing Philosophy</h2>
-      <p class="lead">We invest opportunistically across public and private equity and credit, employing rigorous bottom-up fundamental research. Industries of focus include technology, industrial, energy, healthcare, and business services.</p>
+      <p class="lead">Degen Capital employs a rigorous bottom-up fundamental approach to diligence.</p>
       <div class="split">
         <div>
           <h3>Core Tenets</h3>
@@ -272,7 +366,7 @@
       <h2>Investor Login</h2>
       <p class="lead">Authorized investors may access reporting via the secure portal.</p>
       <p><a class="btn btn--accent" href="https://investor.degencapital.com" target="_blank" rel="noopener">Proceed to Secure Portal</a></p>
-      <p class="help">Need access? Contact <a href="mailto:ir@degen-capital.com">ir@degen-capital.com</a>.</p>
+      <p class="help">Need access? Contact <a href="mailto:ir@degen-capital.com">ir@degen-capital.com</a></p>
     </div>
   </section>
 
