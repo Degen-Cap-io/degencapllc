@@ -120,7 +120,7 @@
       display: flex;
       flex-direction: column;
       gap: 2px;
-      background: color-mix(in oklab, var(--bg), transparent 50%);
+      background: color-mix(in oklab, var(--bg), transparent 40%);
       backdrop-filter: blur(10px);
       border: 1px solid color-mix(in oklab, var(--line), transparent 100%);
       border-radius: 12px;
@@ -216,6 +216,10 @@
 
     /* Coarse pointer tweaks */
     @media (pointer:coarse){
+      backdrop-filter: none;
+      -webkit-backdrop-filder: none;
+      background: transparent;
+      box-shadow: none;
       :root{ --btn-h: 48px; }
       nav a{ padding:14px 12px; }
     }
@@ -365,7 +369,7 @@
     <div class="container thin" style="text-align:center;">
       <h2>Investor Login</h2>
       <p class="lead">Authorized investors may access reporting via the secure portal.</p>
-      <p><a class="btn btn--accent" href="https://investor.degencapital.com" target="_blank" rel="noopener">Proceed to Secure Portal</a></p>
+      <p><a class="btn btn--accent" href="https://investor.degen-capital.com" target="_blank" rel="noopener">Proceed to Secure Portal</a></p>
       <p class="help">Need access? Contact <a href="mailto:ir@degen-capital.com">ir@degen-capital.com</a></p>
     </div>
   </section>
@@ -496,3 +500,5 @@
   </script>
 </body>
 </html>
+
+
