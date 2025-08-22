@@ -8,24 +8,24 @@
 <meta name="theme-color" content="#0b0d12" />
 <style>
 :root{
---bg:#0b0d12;
---text:#e9eaee;
---muted:#b7bcc9;
---line:#1a1f2b;
---overlay:rgba(5,7,12,.2);
---accent:#e9eaee;
---maxw:1080px;
---pad: clamp(16px, 5vw, 40px);
---lh: 1.45;
---radius: 12px;
---nav-h: 60px;
---section-gap: clamp(200px, 26vw, 420px);
---focus:#94a3b8;
---top-pad: max(10px, env(safe-area-inset-top));
-/* Computed at runtime to the actual header height */
---nav-visible-h: var(--nav-h);
-/* shared size for menu button */
---btn-h: 40px;
+  --bg:#0b0d12;
+  --text:#e9eaee;
+  --muted:#b7bcc9;
+  --line:#1a1f2b;
+  --overlay:rgba(5,7,12,.2);
+  --accent:#e9eaee;
+  --maxw:1080px;
+  --pad: clamp(16px, 5vw, 40px);
+  --lh: 1.45;
+  --radius: 12px;
+  --nav-h: 60px;
+  --section-gap: clamp(200px, 26vw, 420px);
+  --focus:#94a3b8;
+  --top-pad: max(10px, env(safe-area-inset-top));
+  /* Computed at runtime to the actual header height */
+  --nav-visible-h: var(--nav-h);
+  /* shared size for menu button */
+  --btn-h: 40px;
 }
 
 .logo{width: 32px; height: 32px; display: block; flex-shrink: 0;}
@@ -34,14 +34,14 @@
 *,*::before,*::after{ box-sizing:border-box; }
 html,body{ height:100%; }
 body{
-margin:0;
-font-family: Palatino, "Palatino Linotype", "Book Antiqua", serif;
-background:var(--bg);
-color:var(--text);
-line-height:var(--lh);
--webkit-font-smoothing:antialiased;
-text-rendering:optimizeLegibility;
-overflow-x:hidden;
+  margin:0;
+  font-family: Palatino, "Palatino Linotype", "Book Antiqua", serif;
+  background:var(--bg);
+  color:var(--text);
+  line-height:var(--lh);
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+  overflow-x:hidden;
 }
 
 .bg{ position:fixed; inset:0; width:100vw; height:100lvh; overflow:hidden; z-index:-2; }
@@ -50,24 +50,29 @@ overflow-x:hidden;
 
 /* Header: hidden by default; reveals on scroll up or near top */
 header{
-position:fixed; top:0; left:0; right:0; z-index:20;
-display:flex; align-items:center; justify-content:space-between;
-padding: var(--top-pad) var(--pad) 8px var(--pad);
-height: auto;
-backdrop-filter: blur(8px);
-/* Fallback then color-mix */
-background: rgba(11,13,18,0.4);
-background: color-mix(in oklab, var(--bg), transparent 80%);
-transform: translateY(-100%); opacity:0; pointer-events:none;
-transition: transform .2s ease, opacity .2s ease;
-border-bottom: 1px solid rgba(26,31,43,0.75);
-border-bottom: 1px solid color-mix(in oklab, var(--line), transparent 25%);
+  position:fixed; top:0; left:0; right:0; z-index:20;
+  display:flex; align-items:center; justify-content:space-between;
+  padding: var(--top-pad) var(--pad) 8px var(--pad);
+  height: auto;
+
+  /* CHANGE: add Safari blur prefix, strengthen frosting */
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+
+  /* Fallback then color-mix */
+  background: rgba(11,13,18,0.42); /* CHANGE: slightly darker for stronger frost */
+  background: color-mix(in oklab, var(--bg), transparent 58%);
+
+  transform: translateY(-100%); opacity:0; pointer-events:none;
+  transition: transform .2s ease, opacity .2s ease;
+  border-bottom: 1px solid rgba(26,31,43,0.75);
+  border-bottom: 1px solid color-mix(in oklab, var(--line), transparent 25%);
 }
 html.show-header header,
 html.nav-open header{
-transform: translateY(0);
-opacity:1;
-pointer-events:auto;
+  transform: translateY(0);
+  opacity:1;
+  pointer-events:auto;
 }
 
 .brand{ display:flex; align-items:center; gap:12px; text-decoration:none; color:inherit; }
@@ -76,107 +81,118 @@ pointer-events:auto;
 
 /* Floating Menu button — aligned with header vertically */
 .menu-fab{
-position:fixed;
-top: calc((var(--nav-visible-h) - var(--btn-h)) / 2);
-right: var(--pad);
-z-index: 30;
+  position:fixed;
+  top: calc((var(--nav-visible-h) - var(--btn-h)) / 2);
+  right: var(--pad);
+  z-index: 30;
 }
 .menu-btn{
-appearance:none; border:0; cursor:pointer;
-display:inline-flex; align-items:center; justify-content:center;
-width: var(--btn-h);
-height: var(--btn-h);
-border-radius:999px;
-background: color-mix(in oklab, var(--bg), transparent 100%);
-color: var(--text); font-size:18px; line-height:1;
-backdrop-filter: blur(8px);
-border: 1px solid color-mix(in oklab, var(--line), transparent 100%);
+  appearance:none; border:0; cursor:pointer;
+  display:inline-flex; align-items:center; justify-content:center;
+  width: var(--btn-h);
+  height: var(--btn-h);
+  border-radius:999px;
+
+  /* CHANGE: ensure translucent + blur for the button itself */
+  background: color-mix(in oklab, var(--bg), transparent 60%);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+
+  color: var(--text); font-size:18px; line-height:1;
+  border: 1px solid color-mix(in oklab, var(--line), transparent 35%); /* subtle ring */
 }
 .menu-btn:hover{
-background: color-mix(in oklab, var(--bg), transparent 100%);
+  background: color-mix(in oklab, var(--bg), transparent 55%); /* CHANGE: slight hover */
 }
-.menu-btn:focus-visible{ outline: 2px solid var(--focus); outline-offset: 2px; }
+/* If you truly want no focus ring, comment the next line; kept for a11y */
+.menu-btn:focus-visible{ outline: none !important; }
 .menu-btn[aria-expanded="true"]{
-background: color-mix(in oklab, var(--bg), transparent 100%);
+  background: color-mix(in oklab, var(--bg), transparent 55%);
 }
 
-/* ========= NEW: Mobile dropdown anchored under the menu button ========= */
+/* ========= Mobile dropdown anchored under the menu button ========= */
 nav{
-position:fixed;
-top: calc(var(--nav-visible-h) + 8px);
-right: var(--pad);
-left: auto;
-translate: 0 -6px;
-opacity: 0;
-pointer-events: none;
-transition: opacity .18s ease, translate .18s ease;
-padding: 0;
-z-index: 40;
-width: min(240px, 86vw);
+  position:fixed;
+  top: calc(var(--nav-visible-h) + 8px);
+  right: var(--pad);
+  left: auto;
+  translate: 0 -6px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .18s ease, translate .18s ease;
+  padding: 0;
+  z-index: 40;
+  width: min(240px, 86vw);
 }
 
 .nav-panel{
-position: relative;
-display: flex;
-flex-direction: column;
-gap: 2px;
-      background: color-mix(in oklab, var(--bg), transparent 50%);
-      background: color-mix(in oklab, var(--bg), transparent 40%);
-backdrop-filter: blur(10px);
-border: 1px solid color-mix(in oklab, var(--line), transparent 100%);
-border-radius: 12px;
-padding: 8px;
-box-shadow:
-0 6px 20px rgba(0,0,0,.35),
-0 0 0 1px color-mix(in oklab, var(--line), transparent 70%) inset;
-overflow: clip;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+
+  /* CHANGE: unified frosted glass (works with Safari) */
+  background: rgba(11,13,18,0.42);
+  background: color-mix(in oklab, var(--bg), transparent 58%);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+
+  border: 1px solid color-mix(in oklab, var(--line), transparent 35%);
+  border-radius: 12px;
+  padding: 8px;
+  box-shadow:
+    0 6px 20px rgba(0,0,0,.35),
+    0 0 0 1px color-mix(in oklab, var(--line), transparent 70%) inset;
+  overflow: clip;
 }
 
 /* Arrow pointer to the button */
 .nav-panel::before{
-content:"";
-position:absolute;
-top: -6px;
-right: 18px;
-width: 10px; height: 10px;
-background: inherit;
-border-left: 1px solid color-mix(in oklab, var(--line), transparent 18%);
-border-top: 1px solid color-mix(in oklab, var(--line), transparent 18%);
-transform: rotate(45deg);
-backdrop-filter: inherit;
+  content:"";
+  position:absolute;
+  top: -6px;
+  right: 18px;
+  width: 10px; height: 10px;
+
+  /* CHANGE: inherit glass + blur for Safari */
+  background: inherit;
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+
+  border-left: 1px solid color-mix(in oklab, var(--line), transparent 18%);
+  border-top: 1px solid color-mix(in oklab, var(--line), transparent 18%);
+  transform: rotate(45deg);
 }
 
 /* Links — compact, right-aligned for tidy rag under the button */
 nav a{
-color: var(--text);
-text-decoration: none;
-font-size: 13px;
-letter-spacing: .12em;
-text-transform: uppercase;
-padding: 6px 10px;
-border-radius: 8px;
-text-align: right;
-opacity: 0;
-transform: translateY(-6px);
-transition:
-opacity .22s ease,
-transform .22s ease,
-background-color .15s ease;
+  color: var(--text);
+  text-decoration: none;
+  font-size: 13px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  padding: 6px 10px;
+  border-radius: 8px;
+  text-align: right;
+  opacity: 0;
+  transform: translateY(-6px);
+  transition:
+    opacity .22s ease,
+    transform .22s ease,
+    background-color .15s ease;
 }
 nav a:hover{ background: rgba(255,255,255,.06); }
 
 /* Open state */
 html.nav-open nav{
-opacity: 1; translate: 0 0; pointer-events: auto;
+  opacity: 1; translate: 0 0; pointer-events: auto;
 }
 
-/* Cascade: stagger the three items */
-html.nav-open nav a:nth-child(1){ transition-delay: .15s; opacity:1; transform: translateY(0); }
-html.nav-open nav a:nth-child(2){ transition-delay: .30s; opacity:1; transform: translateY(0); }
-html.nav-open nav a:nth-child(3){ transition-delay: .45s; opacity:1; transform: translateY(0); }
-html.nav-open nav a:nth-child(4){ transition-delay: .60s; opacity:1; transform: translateY(0); }
-
-/* ===================================================================== */
+/* Cascade: stagger the four items */
+html.nav-open nav a:nth-child(1){ transition-delay: .12s; opacity:1; transform: translateY(0); }
+html.nav-open nav a:nth-child(2){ transition-delay: .24s; opacity:1; transform: translateY(0); }
+html.nav-open nav a:nth-child(3){ transition-delay: .36s; opacity:1; transform: translateY(0); }
+html.nav-open nav a:nth-child(4){ transition-delay: .48s; opacity:1; transform: translateY(0); }
 
 main{ min-height:calc(100svh - var(--nav-visible-h)); display:grid; place-items:center; padding: clamp(32px, 8vw, 120px) var(--pad) 0; }
 .hero{ width:100%; max-width:var(--maxw); margin:0 auto; text-align:left; }
@@ -195,11 +211,15 @@ section.section{ padding: clamp(40px, 8vw, 60px) var(--pad); max-width: var(--ma
 .btn--accent:hover{ background:#1a1f27; }
 
 footer{
-padding:14px var(--pad); color:var(--muted); font-size:12px; text-align:left;
-border-top:1px solid rgba(26,31,43,0.65);
-border-top:1px solid color-mix(in oklab, var(--line), transparent 35%);
-background: rgba(11,13,18,0.3);
-background: color-mix(in oklab, var(--bg), transparent 70%); backdrop-filter: blur(6px);
+  padding:14px var(--pad); color:var(--muted); font-size:12px; text-align:left;
+  border-top:1px solid rgba(26,31,43,0.65);
+  border-top:1px solid color-mix(in oklab, var(--line), transparent 35%);
+
+  /* CHANGE: footer blur (Safari + Chrome) */
+  background: rgba(11,13,18,0.38);
+  background: color-mix(in oklab, var(--bg), transparent 62%);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
 }
 
 /* Invisible focus sentinels for a11y */
@@ -207,57 +227,56 @@ background: color-mix(in oklab, var(--bg), transparent 70%); backdrop-filter: bl
 
 /* Reduced motion/data handling */
 @media (prefers-reduced-motion: reduce){
-*{ animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important; scroll-behavior:auto !important; }
-header, .menu-btn, nav{ backdrop-filter:none; }
+  *{ animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important; scroll-behavior:auto !important; }
+  header, .menu-btn, nav{ -webkit-backdrop-filter:none; backdrop-filter:none; } /* keep consistent */
 }
 @media (prefers-reduced-data: reduce){
-.bg video{ display:none; }
-.bg{ background: url('assets/nyc-skyline.jpg') center/cover no-repeat; }
+  .bg video{ display:none; }
+  .bg{ background: url('assets/nyc-skyline.jpg') center/cover no-repeat; }
 }
 
 /* Coarse pointer tweaks */
+/* CHANGE: keep blur on mobile; remove rules that disabled it and fix prefix typo */
 @media (pointer:coarse){
-      backdrop-filter: none;
-      -webkit-backdrop-filder: none;
-      background: transparent;
-      box-shadow: none;
-:root{ --btn-h: 48px; }
-nav a{ padding:14px 12px; }
+  :root{ --btn-h: 48px; }
+  nav a{ padding:14px 12px; }
 }
 
 /* ===== Desktop: restore inline nav ===== */
 @media (min-width: 820px){
-.menu-fab{ display:none; }
-nav{
-position: static;
-width: auto;
-translate: 0;
-opacity: 1;
-pointer-events: auto;
-padding: 0;
-top: auto; right: auto;
-}
-.nav-panel{
-position: static;
-display: flex;
-flex-direction: row;
-gap: 8px;
-background: transparent;
-border: 0;
-padding: 0;
-box-shadow: none;
-}
-.nav-panel::before{ display:none; }
-nav a{
-text-align: left;
-opacity: 1;
-transform: none;
-transition: background-color .15s ease;
-padding: 8px 10px;
-border-radius: 6px;
-font-size: 14px;
-letter-spacing: .08em;
-}
+  .menu-fab{ display:none; }
+  nav{
+    position: static;
+    width: auto;
+    translate: 0;
+    opacity: 1;
+    pointer-events: auto;
+    padding: 0;
+    top: auto; right: auto;
+  }
+  .nav-panel{
+    position: static;
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    background: transparent;
+    -webkit-backdrop-filter: none; /* not needed inline */
+    backdrop-filter: none;
+    border: 0;
+    padding: 0;
+    box-shadow: none;
+  }
+  .nav-panel::before{ display:none; }
+  nav a{
+    text-align: left;
+    opacity: 1;
+    transform: none;
+    transition: background-color .15s ease;
+    padding: 8px 10px;
+    border-radius: 6px;
+    font-size: 14px;
+    letter-spacing: .08em;
+  }
 }
 </style>
 </head>
@@ -265,126 +284,125 @@ letter-spacing: .08em;
 <div id="top" aria-hidden="true"></div>
 
 <div class="bg" aria-hidden="true">
-<video autoplay muted loop playsinline preload="metadata" poster="assets/nyc-skyline.jpg">
-<source src="assets/nyc-night-loop.mp4" type="video/mp4" />
-</video>
+  <video autoplay muted loop playsinline preload="metadata" poster="assets/nyc-skyline.jpg">
+    <source src="assets/nyc-night-loop.mp4" type="video/mp4" />
+  </video>
 </div>
 
 <!-- Floating menu button -->
 <div class="menu-fab">
-<button class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="primaryNav" aria-label="Toggle navigation">☰</button>
+  <button class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="primaryNav" aria-label="Toggle navigation">☰</button>
 </div>
 
 <!-- Auto-revealing header -->
 <header>
-<a class="brand" href="#top" aria-label="Degen Capital, LLC Home">
-<!-- Minimal monogram logo (inline SVG) -->
-<svg width="32" height="32" viewBox="0 0 64 64" role="img" aria-labelledby="logoTitle logoDesc" fill="none">
-<title id="logoTitle">Degen Capital Monogram</title>
-<desc id="logoDesc">Interlocking D and C inside a rounded square</desc>
-<rect x="1.5" y="1.5" width="61" height="61" rx="9" stroke="currentColor" stroke-width="3"/>
-<path d="M18 16h10c10 0 18 8 18 16s-8 16-18 16H18V16z" stroke="currentColor" stroke-width="3" fill="none" stroke-linejoin="round"/>
-<path d="M45 20.5c-3.5-3.5-7.5-5.5-12.5-5.5-9.5 0-17 7.5-17 17s7.5 17 17 17c5 0 9-2 12.5-5.5" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round"/>
-</svg>
-<div>
-<div class="wordmark">Degen&nbsp;Capital&nbsp;LLC</div>
-</div>
-</a>
+  <a class="brand" href="#top" aria-label="Degen Capital, LLC Home">
+    <!-- Minimal monogram logo (inline SVG) -->
+    <svg width="32" height="32" viewBox="0 0 64 64" role="img" aria-labelledby="logoTitle logoDesc" fill="none">
+      <title id="logoTitle">Degen Capital Monogram</title>
+      <desc id="logoDesc">Interlocking D and C inside a rounded square</desc>
+      <rect x="1.5" y="1.5" width="61" height="61" rx="9" stroke="currentColor" stroke-width="3"/>
+      <path d="M18 16h10c10 0 18 8 18 16s-8 16-18 16H18V16z" stroke="currentColor" stroke-width="3" fill="none" stroke-linejoin="round"/>
+      <path d="M45 20.5c-3.5-3.5-7.5-5.5-12.5-5.5-9.5 0-17 7.5-17 17s7.5 17 17 17c5 0 9-2 12.5-5.5" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round"/>
+    </svg>
+    <div>
+      <div class="wordmark">Degen&nbsp;Capital&nbsp;LLC</div>
+    </div>
+  </a>
 
-<!-- Focus trap sentinels + nav -->
-<a href="#primaryNav" class="nav-sentinel" id="navStart">.</a>
-<nav id="primaryNav" aria-label="Primary" role="dialog" aria-modal="true" aria-labelledby="menuBtn">
-<div class="nav-panel">
-<a href="#top">Home</a>
-<a href="#about">About</a>
-<a href="#philosophy">Philosophy</a>
-<a href="#login">Login</a>
-</div>
-</nav>
-<a href="#menuBtn" class="nav-sentinel" id="navEnd">.</a>
+  <!-- Focus trap sentinels + nav -->
+  <a href="#primaryNav" class="nav-sentinel" id="navStart">.</a>
+  <nav id="primaryNav" aria-label="Primary" role="dialog" aria-modal="true" aria-labelledby="menuBtn">
+    <div class="nav-panel">
+      <a href="#top">Home</a>
+      <a href="#about">About</a>
+      <a href="#philosophy">Philosophy</a>
+      <a href="#login">Login</a>
+    </div>
+  </nav>
+  <a href="#menuBtn" class="nav-sentinel" id="navEnd">.</a>
 </header>
 
 <main>
-<section class="hero">
-<h1>Embracing</h1>
-<h1>complexity to</h1>
-<h1>capture alpha</h1>
-<p class="lede">since 2020.</p>
-</section>
+  <section class="hero">
+    <h1>Embracing</h1>
+    <h1>complexity to</h1>
+    <h1>capture alpha</h1>
+    <p class="lede">since 2020.</p>
+  </section>
 </main>
 
 <section id="spacer-element" class="section" aria-hidden="true">
-<div class="container thin">
-<div style="height:200px;"></div>
-</div>
+  <div class="container thin">
+    <div style="height:200px;"></div>
+  </div>
 </section>
 
 <section id="about" class="section">
-<div class="container thin">
-<h2>About Degen Capital</h2>
-<p class="lead">Degen Capital is a niche investment manager specializing in alternative assets. We emphasize an opportunistic, value-oriented and risk-controlled approach to investing public and private equity and credit. Industries of focus include technology, industrial, energy, healthcare, and business services. To date, we have invested in excess of $500 million.</p>
-<div class="split">
-</div>
+  <div class="container thin">
+    <h2>About Degen Capital</h2>
+    <p class="lead">Degen Capital is a niche investment manager specializing in alternative assets. We emphasize an opportunistic, value-oriented and risk-controlled approach to investing public and private equity and credit. Industries of focus include technology, industrial, energy, healthcare, and business services. To date, we have invested in excess of $500 million.</p>
+    <div class="split"></div>
 </section>
 
 <section id="spacer-element" class="section" aria-hidden="true">
-<div class="container thin">
-<div style="height:200px;"></div>
-</div>
+  <div class="container thin">
+    <div style="height:200px;"></div>
+  </div>
 </section>
 
 <section id="philosophy" class="section">
-<div class="container thin">
-<h2>Investing Philosophy</h2>
-<p class="lead">Degen Capital employs a rigorous bottom-up fundamental approach to diligence.</p>
-<div class="split">
-<div>
-<h3>Core Tenets</h3>
-<ul class="bullets">
-<li>Intrinsic value &amp; margin of safety.</li>
-<li>Business quality &amp; durable moats.</li>
-<li>Rational, aligned management &amp; governance.</li>
-<li>Patience &amp; concentration; let winners compound.</li>
-</ul>
-</div>
-<div>
-<h3>Decision Factors</h3>
-<ul class="bullets">
-<li>Asymmetric risk–reward.</li>
-<li>Understand mispricing.</li>
-<li>Multi-year horizon; low turnover; tax-aware.</li>
-<li>Exit on thesis break or superior alternatives.</li>
-</ul>
-</div>
-</div>
-</div>
+  <div class="container thin">
+    <h2>Investing Philosophy</h2>
+    <p class="lead">Degen Capital employs a rigorous bottom-up fundamental approach to diligence.</p>
+    <div class="split">
+      <div>
+        <h3>Core Tenets</h3>
+        <ul class="bullets">
+          <li>Intrinsic value &amp; margin of safety.</li>
+          <li>Business quality &amp; durable moats.</li>
+          <li>Rational, aligned management &amp; governance.</li>
+          <li>Patience &amp; concentration; let winners compound.</li>
+        </ul>
+      </div>
+      <div>
+        <h3>Decision Factors</h3>
+        <ul class="bullets">
+          <li>Asymmetric risk–reward.</li>
+          <li>Understand mispricing.</li>
+          <li>Multi-year horizon; low turnover; tax-aware.</li>
+          <li>Exit on thesis break or superior alternatives.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
 </section>
 
 <section id="spacer-element" class="section" aria-hidden="true">
-<div class="container thin">
-<div style="height:200px;"></div>
-</div>
+  <div class="container thin">
+    <div style="height:200px;"></div>
+  </div>
 </section>
 
 <section id="login" class="section">
-<div class="container thin" style="text-align:center;">
-<h2>Investor Login</h2>
-<p class="lead">Authorized investors may access reporting via the secure portal.</p>
-      <p><a class="btn btn--accent" href="https://investor.degencapital.com" target="_blank" rel="noopener">Proceed to Secure Portal</a></p>
-      <p><a class="btn btn--accent" href="https://investor.degen-capital.com" target="_blank" rel="noopener">Proceed to Secure Portal</a></p>
-<p class="help">Need access? Contact <a href="mailto:ir@degen-capital.com">ir@degen-capital.com</a></p>
-</div>
+  <div class="container thin" style="text-align:center;">
+    <h2>Investor Login</h2>
+    <p class="lead">Authorized investors may access reporting via the secure portal.</p>
+    <p><a class="btn btn--accent" href="https://investor.degencapital.com" target="_blank" rel="noopener">Proceed to Secure Portal</a></p>
+    <p><a class="btn btn--accent" href="https://investor.degen-capital.com" target="_blank" rel="noopener">Proceed to Secure Portal</a></p>
+    <p class="help">Need access? Contact <a href="mailto:ir@degen-capital.com">ir@degen-capital.com</a></p>
+  </div>
 </section>
 
 <section id="spacer-element" class="section" aria-hidden="true">
-<div class="container thin">
-<div style="height:50px;"></div>
-</div>
+  <div class="container thin">
+    <div style="height:50px;"></div>
+  </div>
 </section>
 
 <footer>
-For qualified investors only. Nothing herein constitutes an offer to sell or a solicitation to buy any security.<br />
-© <span id="y"></span> Degen Capital, LLC. All rights reserved.
+  For qualified investors only. Nothing herein constitutes an offer to sell or a solicitation to buy any security.<br />
+  © <span id="y"></span> Degen Capital, LLC. All rights reserved.
 </footer>
 
 <script>
@@ -398,9 +416,9 @@ const headerEl = document.querySelector('header');
 
 // Compute actual header height → set CSS var for layout
 function setHeaderVars(){
-const rect = headerEl.getBoundingClientRect();
-const h = Math.ceil(rect.height);
-document.documentElement.style.setProperty('--nav-visible-h', h + 'px');
+  const rect = headerEl.getBoundingClientRect();
+  const h = Math.ceil(rect.height);
+  document.documentElement.style.setProperty('--nav-visible-h', h + 'px');
 }
 setHeaderVars();
 window.addEventListener('resize', setHeaderVars);
@@ -408,54 +426,54 @@ window.addEventListener('resize', setHeaderVars);
 let shouldShowHeader = false;
 
 function setOpen(open){
-menuBtn.setAttribute('aria-expanded', open);
-html.classList.toggle('nav-open', open);
-html.classList.toggle('show-header', open || shouldShowHeader);
+  menuBtn.setAttribute('aria-expanded', open);
+  html.classList.toggle('nav-open', open);
+  html.classList.toggle('show-header', open || shouldShowHeader);
 
-if(open){
-// Move focus into the nav; lock background scroll
-const firstLink = nav.querySelector('a');
-(firstLink || nav).focus({preventScroll:true});
-document.body.style.overflow = 'hidden';
-} else {
-menuBtn.focus({preventScroll:true});
-document.body.style.overflow = '';
-}
+  if(open){
+    // Move focus into the nav; lock background scroll
+    const firstLink = nav.querySelector('a');
+    (firstLink || nav).focus({preventScroll:true});
+    document.body.style.overflow = 'hidden';
+  } else {
+    menuBtn.focus({preventScroll:true});
+    document.body.style.overflow = '';
+  }
 }
 
 // Toggle handlers
 menuBtn.addEventListener('click', () => setOpen(menuBtn.getAttribute('aria-expanded') !== 'true'));
 document.addEventListener('keydown', (e) => {
-if(e.key === 'Escape') setOpen(false);
+  if(e.key === 'Escape') setOpen(false);
 
-// Trap focus inside nav when open
-if(html.classList.contains('nav-open') && e.key === 'Tab'){
-const focusables = nav.querySelectorAll('a, button, [tabindex]:not([tabindex="-1"])');
-if(focusables.length){
-const first = focusables[0], last = focusables[focusables.length - 1];
-if(e.shiftKey && document.activeElement === first){ last.focus(); e.preventDefault(); }
-else if(!e.shiftKey && document.activeElement === last){ first.focus(); e.preventDefault(); }
-}
-}
+  // Trap focus inside nav when open
+  if(html.classList.contains('nav-open') && e.key === 'Tab'){
+    const focusables = nav.querySelectorAll('a, button, [tabindex]:not([tabindex="-1"])');
+    if(focusables.length){
+      const first = focusables[0], last = focusables[focusables.length - 1];
+      if(e.shiftKey && document.activeElement === first){ last.focus(); e.preventDefault(); }
+      else if(!e.shiftKey && document.activeElement === last){ first.focus(); e.preventDefault(); }
+    }
+  }
 });
 
 document.addEventListener('click', (e) => {
-if(!nav.contains(e.target) && !menuBtn.contains(e.target)) setOpen(false);
+  if(!nav.contains(e.target) && !menuBtn.contains(e.target)) setOpen(false);
 });
 
 // Nav smooth scroll
 nav.addEventListener('click', (e) => {
-const link = e.target.closest('a');
-if(!link) return;
-const href = link.getAttribute('href') || '';
-if(href.startsWith('#')){
-const target = document.querySelector(href);
-if(target){
-e.preventDefault();
-target.scrollIntoView({ behavior:'smooth', block:'start' });
-setOpen(false);
-}
-}
+  const link = e.target.closest('a');
+  if(!link) return;
+  const href = link.getAttribute('href') || '';
+  if(href.startsWith('#')){
+    const target = document.querySelector(href);
+    if(target){
+      e.preventDefault();
+      target.scrollIntoView({ behavior:'smooth', block:'start' });
+      setOpen(false);
+    }
+  }
 });
 
 // Header reveal/hide behavior
@@ -468,38 +486,37 @@ function scrollingUp(){ return window.scrollY < lastY - 2; }
 function scrollingDown(){ return window.scrollY > lastY + 2; }
 
 window.addEventListener('scroll', () => {
-if (scrollingDown() && window.scrollY > 10){
-setOpen(false);
-hideHeader();
-} else if (scrollingUp() || window.scrollY < 10){
-showHeader();
-}
-lastY = window.scrollY;
+  if (scrollingDown() && window.scrollY > 10){
+    setOpen(false);
+    hideHeader();
+  } else if (scrollingUp() || window.scrollY < 10){
+    showHeader();
+  }
+  lastY = window.scrollY;
 }, { passive:true });
 
 // Pointer near top reveals header
 let pointerNearTop = false;
 document.addEventListener('mousemove', (e) => {
-const near = e.clientY <= NEAR_TOP_PX;
-if (near && !pointerNearTop){ pointerNearTop = true; showHeader(); }
-else if (!near && pointerNearTop){
-pointerNearTop = false;
-if(!html.classList.contains('nav-open') && window.scrollY > 10) hideHeader();
-}
+  const near = e.clientY <= NEAR_TOP_PX;
+  if (near && !pointerNearTop){ pointerNearTop = true; showHeader(); }
+  else if (!near && pointerNearTop){
+    pointerNearTop = false;
+    if(!html.classList.contains('nav-open') && window.scrollY > 10) hideHeader();
+  }
 });
 
 // Touch: swipe up near top reveals
 let touchStartY = null;
 window.addEventListener('touchstart', (e) => {
-if (e.touches && e.touches[0]) touchStartY = e.touches[0].clientY;
+  if (e.touches && e.touches[0]) touchStartY = e.touches[0].clientY;
 }, {passive:true});
 window.addEventListener('touchmove', (e) => {
-if (!e.touches || !e.touches[0]) return;
-const y = e.touches[0].clientY;
-const movedUp = touchStartY !== null && (touchStartY - y) > 10;
-if (y <= NEAR_TOP_PX || movedUp) showHeader();
+  if (!e.touches || !e.touches[0]) return;
+  const y = e.touches[0].clientY;
+  const movedUp = touchStartY !== null && (touchStartY - y) > 10;
+  if (y <= NEAR_TOP_PX || movedUp) showHeader();
 }, {passive:true});
 </script>
 </body>
 </html>
-
