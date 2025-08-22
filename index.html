@@ -46,8 +46,15 @@ body{
 
 .bg{ position:fixed; inset:0; width:100vw; height:100lvh; overflow:hidden; z-index:-2; }
 .bg video{ width:100%; height:100%; object-fit:cover; pointer-events:none; }
-/* .bg overlay stays the same */
-.bg::after{ content:""; position:absolute; inset:0; background: var(--overlay); }
+/* overlay */
+.bg::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background: var(--overlay);
+  pointer-events:none;           /* FIX: ensure overlay never intercepts */
+  z-index:-1;                    /* FIX: keep behind video & everything */
+}
 
 /* Header: hidden by default; reveals on scroll up or near top */
 header{
@@ -56,16 +63,20 @@ header{
   padding: var(--top-pad) var(--pad) 8px var(--pad);
   height: auto;
 
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
-
-  background: rgba(11,13,18,0.42);
-  background: color-mix(in oklab, var(--bg), transparent 58%);
-
+  /* FIX: move blur+bg to ::before so it lives behind content */
+  background: transparent;
   transform: translateY(-100%); opacity:0; pointer-events:none;
   transition: transform .2s ease, opacity .2s ease;
   border-bottom: 1px solid rgba(26,31,43,0.75);
   border-bottom: 1px solid color-mix(in oklab, var(--line), transparent 25%);
+}
+header::before{                  /* FIX: glass layer behind header content */
+  content:"";
+  position:absolute; inset:0;
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  background: color-mix(in oklab, var(--bg), transparent 58%);
+  z-index:-1;
 }
 html.show-header header,
 html.nav-open header{
@@ -84,7 +95,7 @@ html.nav-open header{
   top: calc((var(--nav-visible-h) - var(--btn-h)) / 2);
   right: var(--pad);
   z-index: 30;
-  isolation: isolate;                /* CHANGE: ensure iOS blur samples correctly */
+  isolation: isolate;                /* ensure iOS blur samples correctly */
 }
 .menu-btn{
   appearance:none; border:0; cursor:pointer;
@@ -93,9 +104,9 @@ html.nav-open header{
   height: var(--btn-h);
   border-radius:999px;
 
-  position: relative;                /* CHANGE: anchor ::before glass layer */
-  background: transparent;           /* CHANGE: move glass to ::before for iOS reliability */
-  -webkit-tap-highlight-color: transparent; /* CHANGE: remove blue tap ring */
+  position: relative;                /* anchor ::before glass layer */
+  background: transparent;           /* move glass to ::before for iOS reliability */
+  -webkit-tap-highlight-color: transparent; /* remove blue tap ring */
 
   color: var(--text); font-size:18px; line-height:1;
   border: 1px solid color-mix(in oklab, var(--line), transparent 35%); /* subtle ring */
@@ -131,7 +142,7 @@ html.nav-open header{
   .menu-btn .hamburger i:nth-child(2){ top: 6.5px; }
 }
 
-/* CHANGE: dedicated glass layer for iOS Safari */
+/* dedicated glass layer for iOS Safari */
 .menu-btn::before{
   content:"";
   position:absolute;
@@ -143,11 +154,11 @@ html.nav-open header{
   background: rgba(11,13,18,0.42);
 }
 .menu-btn:hover{
-  background: color-mix(in oklab, var(--bg), transparent 65%); /* CHANGE: subtle hover above glass */
+  background: color-mix(in oklab, var(--bg), transparent 65%); /* subtle hover above glass */
 }
 .menu-btn:focus-visible{ outline: none !important; }
 .menu-btn[aria-expanded="true"]{
-  background: color-mix(in oklab, var(--bg), transparent 60%); /* CHANGE: active tint above glass */
+  background: color-mix(in oklab, var(--bg), transparent 60%); /* active tint above glass */
 }
 
 /* ========= Mobile dropdown anchored under the menu button ========= */
@@ -163,16 +174,16 @@ nav{
   padding: 0;
   z-index: 40;
   width: min(240px, 86vw);
-  isolation: isolate;                /* CHANGE: isolate blur sampling on iOS */
+  isolation: isolate;                /* isolate blur sampling on iOS */
 }
 
 .nav-panel{
-  position: relative;                /* CHANGE: anchor ::after glass layer */
+  position: relative;                /* anchor ::after glass layer */
   display: flex;
   flex-direction: column;
   gap: 2px;
 
-  background: transparent;           /* CHANGE: move glass to ::after */
+  background: transparent;           /* glass is on ::after */
   border: 1px solid color-mix(in oklab, var(--line), transparent 35%);
   border-radius: 12px;
   padding: 8px;
@@ -181,7 +192,7 @@ nav{
     0 0 0 1px color-mix(in oklab, var(--line), transparent 70%) inset;
   overflow: clip;
 }
-/* CHANGE: glass layer that actually blurs on iOS */
+/* glass layer that actually blurs on iOS */
 .nav-panel::after{
   content:"";
   position:absolute;
@@ -202,7 +213,6 @@ nav{
   right: 18px;
   width: 10px; height: 10px;
 
-  /* CHANGE: give the arrow its own glass for iOS */
   -webkit-backdrop-filter: saturate(1.1) blur(12px);
   backdrop-filter: saturate(1.1) blur(12px);
   background: rgba(11,13,18,0.42);
@@ -210,7 +220,7 @@ nav{
   border-left: 1px solid color-mix(in oklab, var(--line), transparent 18%);
   border-top: 1px solid color-mix(in oklab, var(--line), transparent 18%);
   transform: rotate(45deg);
-  z-index:-1;                        /* CHANGE: keep below links */
+  z-index:-1;                        /* keep below links */
 }
 
 /* Links — compact, right-aligned for tidy rag under the button */
@@ -255,7 +265,24 @@ section.section{ padding: clamp(40px, 8vw, 60px) var(--pad); max-width: var(--ma
 @media (min-width:720px){ .split{ grid-template-columns:1fr 1fr; gap:36px; } }
 .bullets{ list-style:disc; padding-left:18px; }
 
-.btn{ display:inline-block; padding:10px 16px; border:1px solid var(--text); border-radius:8px; font-size:1rem; text-decoration:none; min-width:44px; min-height:44px; }
+/* BUTTON: isolate & shim to prevent Safari ghosting */
+.btn{
+  display:inline-block; padding:10px 16px; border:1px solid var(--text); border-radius:8px; font-size:1rem; text-decoration:none; min-width:44px; min-height:44px;
+  position: relative;              /* FIX */
+  isolation: isolate;              /* FIX: stop ancestor backdrops sampling text */
+  -webkit-transform: translateZ(0);/* FIX: force its own layer */
+  transform: translateZ(0);        /* FIX */
+  backface-visibility: hidden;     /* FIX */
+  will-change: transform;          /* FIX */
+  background-clip: padding-box;    /* FIX: avoids fringe blending issues */
+}
+.btn::before{                      /* FIX: microscopic opaque shim */
+  content:"";
+  position:absolute; inset:0;
+  border-radius:inherit;
+  background: rgba(11,13,18,0.01);
+  z-index:-1;
+}
 .btn--accent{ background:transparent; color:#fff; }
 .btn--accent:hover{ background:#1a1f27; }
 
@@ -314,7 +341,7 @@ footer{
     box-shadow: none;
   }
   .nav-panel::after,
-  .nav-panel::before{ display:none; } /* CHANGE: disable glass layers inline on desktop */
+  .nav-panel::before{ display:none; } /* disable glass layers inline on desktop */
   nav a{
     text-align: left;
     opacity: 1;
@@ -327,7 +354,7 @@ footer{
   }
 }
 
-/* CHANGE: help iOS compositing with video background */
+/* help iOS compositing with video background */
 .bg video{
   transform: translateZ(0);
   will-change: transform;
