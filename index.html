@@ -46,6 +46,7 @@ body{
 
 .bg{ position:fixed; inset:0; width:100vw; height:100lvh; overflow:hidden; z-index:-2; }
 .bg video{ width:100%; height:100%; object-fit:cover; pointer-events:none; }
+/* .bg overlay stays the same */
 .bg::after{ content:""; position:absolute; inset:0; background: var(--overlay); }
 
 /* Header: hidden by default; reveals on scroll up or near top */
@@ -55,12 +56,10 @@ header{
   padding: var(--top-pad) var(--pad) 8px var(--pad);
   height: auto;
 
-  /* CHANGE: add Safari blur prefix, strengthen frosting */
   -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
 
-  /* Fallback then color-mix */
-  background: rgba(11,13,18,0.42); /* CHANGE: slightly darker for stronger frost */
+  background: rgba(11,13,18,0.42);
   background: color-mix(in oklab, var(--bg), transparent 58%);
 
   transform: translateY(-100%); opacity:0; pointer-events:none;
@@ -85,6 +84,7 @@ html.nav-open header{
   top: calc((var(--nav-visible-h) - var(--btn-h)) / 2);
   right: var(--pad);
   z-index: 30;
+  isolation: isolate;                /* CHANGE: ensure iOS blur samples correctly */
 }
 .menu-btn{
   appearance:none; border:0; cursor:pointer;
@@ -93,21 +93,61 @@ html.nav-open header{
   height: var(--btn-h);
   border-radius:999px;
 
-  /* CHANGE: ensure translucent + blur for the button itself */
-  background: color-mix(in oklab, var(--bg), transparent 60%);
-  -webkit-backdrop-filter: blur(8px);
-  backdrop-filter: blur(8px);
+  position: relative;                /* CHANGE: anchor ::before glass layer */
+  background: transparent;           /* CHANGE: move glass to ::before for iOS reliability */
+  -webkit-tap-highlight-color: transparent; /* CHANGE: remove blue tap ring */
 
   color: var(--text); font-size:18px; line-height:1;
   border: 1px solid color-mix(in oklab, var(--line), transparent 35%); /* subtle ring */
 }
-.menu-btn:hover{
-  background: color-mix(in oklab, var(--bg), transparent 55%); /* CHANGE: slight hover */
+
+/* Three bars inside the circular menu button */
+.menu-btn .hamburger{
+  position: relative;
+  width: 20px;              /* bar group width */
+  height: 14px;             /* overall stack height */
+  display: block;
 }
-/* If you truly want no focus ring, comment the next line; kept for a11y */
+
+/* the bars */
+.menu-btn .hamburger i{
+  position: absolute;
+  left: 0; right: 0;
+  height: 2px;
+  background: currentColor; /* inherits var(--text) */
+  border-radius: 2px;
+  display: block;
+}
+
+/* top / middle / bottom bar positions */
+.menu-btn .hamburger i:nth-child(1){ top: 0; }
+.menu-btn .hamburger i:nth-child(2){ top: 6px; }
+.menu-btn .hamburger i:nth-child(3){ bottom: 0; }
+
+/* Slightly larger bars on touch devices */
+@media (pointer:coarse){
+  .menu-btn .hamburger{ width: 24px; height: 16px; }
+  .menu-btn .hamburger i{ height: 3px; }
+  .menu-btn .hamburger i:nth-child(2){ top: 6.5px; }
+}
+
+/* CHANGE: dedicated glass layer for iOS Safari */
+.menu-btn::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:inherit;
+  pointer-events:none;
+  -webkit-backdrop-filter: saturate(1.1) blur(10px);
+  backdrop-filter: saturate(1.1) blur(10px);
+  background: rgba(11,13,18,0.42);
+}
+.menu-btn:hover{
+  background: color-mix(in oklab, var(--bg), transparent 65%); /* CHANGE: subtle hover above glass */
+}
 .menu-btn:focus-visible{ outline: none !important; }
 .menu-btn[aria-expanded="true"]{
-  background: color-mix(in oklab, var(--bg), transparent 55%);
+  background: color-mix(in oklab, var(--bg), transparent 60%); /* CHANGE: active tint above glass */
 }
 
 /* ========= Mobile dropdown anchored under the menu button ========= */
@@ -123,20 +163,16 @@ nav{
   padding: 0;
   z-index: 40;
   width: min(240px, 86vw);
+  isolation: isolate;                /* CHANGE: isolate blur sampling on iOS */
 }
 
 .nav-panel{
-  position: relative;
+  position: relative;                /* CHANGE: anchor ::after glass layer */
   display: flex;
   flex-direction: column;
   gap: 2px;
 
-  /* CHANGE: unified frosted glass (works with Safari) */
-  background: rgba(11,13,18,0.42);
-  background: color-mix(in oklab, var(--bg), transparent 58%);
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
-
+  background: transparent;           /* CHANGE: move glass to ::after */
   border: 1px solid color-mix(in oklab, var(--line), transparent 35%);
   border-radius: 12px;
   padding: 8px;
@@ -144,6 +180,18 @@ nav{
     0 6px 20px rgba(0,0,0,.35),
     0 0 0 1px color-mix(in oklab, var(--line), transparent 70%) inset;
   overflow: clip;
+}
+/* CHANGE: glass layer that actually blurs on iOS */
+.nav-panel::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:12px;
+  pointer-events:none;
+  -webkit-backdrop-filter: saturate(1.1) blur(12px);
+  backdrop-filter: saturate(1.1) blur(12px);
+  background: rgba(11,13,18,0.42);
+  z-index:-1;
 }
 
 /* Arrow pointer to the button */
@@ -154,14 +202,15 @@ nav{
   right: 18px;
   width: 10px; height: 10px;
 
-  /* CHANGE: inherit glass + blur for Safari */
-  background: inherit;
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
+  /* CHANGE: give the arrow its own glass for iOS */
+  -webkit-backdrop-filter: saturate(1.1) blur(12px);
+  backdrop-filter: saturate(1.1) blur(12px);
+  background: rgba(11,13,18,0.42);
 
   border-left: 1px solid color-mix(in oklab, var(--line), transparent 18%);
   border-top: 1px solid color-mix(in oklab, var(--line), transparent 18%);
   transform: rotate(45deg);
+  z-index:-1;                        /* CHANGE: keep below links */
 }
 
 /* Links — compact, right-aligned for tidy rag under the button */
@@ -215,7 +264,6 @@ footer{
   border-top:1px solid rgba(26,31,43,0.65);
   border-top:1px solid color-mix(in oklab, var(--line), transparent 35%);
 
-  /* CHANGE: footer blur (Safari + Chrome) */
   background: rgba(11,13,18,0.38);
   background: color-mix(in oklab, var(--bg), transparent 62%);
   -webkit-backdrop-filter: blur(6px);
@@ -236,7 +284,6 @@ footer{
 }
 
 /* Coarse pointer tweaks */
-/* CHANGE: keep blur on mobile; remove rules that disabled it and fix prefix typo */
 @media (pointer:coarse){
   :root{ --btn-h: 48px; }
   nav a{ padding:14px 12px; }
@@ -266,7 +313,8 @@ footer{
     padding: 0;
     box-shadow: none;
   }
-  .nav-panel::before{ display:none; }
+  .nav-panel::after,
+  .nav-panel::before{ display:none; } /* CHANGE: disable glass layers inline on desktop */
   nav a{
     text-align: left;
     opacity: 1;
@@ -277,6 +325,12 @@ footer{
     font-size: 14px;
     letter-spacing: .08em;
   }
+}
+
+/* CHANGE: help iOS compositing with video background */
+.bg video{
+  transform: translateZ(0);
+  will-change: transform;
 }
 </style>
 </head>
@@ -291,7 +345,9 @@ footer{
 
 <!-- Floating menu button -->
 <div class="menu-fab">
-  <button class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="primaryNav" aria-label="Toggle navigation">☰</button>
+  <button class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="primaryNav" aria-label="Toggle navigation">
+  <span class="hamburger" aria-hidden="true"><i></i><i></i><i></i></span>
+</button>
 </div>
 
 <!-- Auto-revealing header -->
@@ -389,7 +445,6 @@ footer{
     <h2>Investor Login</h2>
     <p class="lead">Authorized investors may access reporting via the secure portal.</p>
     <p><a class="btn btn--accent" href="https://investor.degencapital.com" target="_blank" rel="noopener">Proceed to Secure Portal</a></p>
-    <p><a class="btn btn--accent" href="https://investor.degen-capital.com" target="_blank" rel="noopener">Proceed to Secure Portal</a></p>
     <p class="help">Need access? Contact <a href="mailto:ir@degen-capital.com">ir@degen-capital.com</a></p>
   </div>
 </section>
