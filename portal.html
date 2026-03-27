@@ -115,13 +115,30 @@ footer{
 <script>
 document.getElementById('y').textContent = new Date().getFullYear();
 
-// Guard: redirect to login if not authenticated
-if(sessionStorage.getItem('dc_auth') !== '1'){
-  window.location.replace('login.html');
-}
+// Guard: verify token server-side on every load
+(async () => {
+  const token = sessionStorage.getItem('dc_token');
+  if(!token){
+    window.location.replace('login.html');
+    return;
+  }
+  try {
+    const res = await fetch('/.netlify/functions/verify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token })
+    });
+    if(!res.ok){
+      sessionStorage.removeItem('dc_token');
+      window.location.replace('login.html');
+    }
+  } catch {
+    window.location.replace('login.html');
+  }
+})();
 
 document.getElementById('logoutBtn').addEventListener('click', () => {
-  sessionStorage.removeItem('dc_auth');
+  sessionStorage.removeItem('dc_token');
   window.location.href = 'login.html';
 });
 

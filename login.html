@@ -361,18 +361,30 @@ form.addEventListener('submit', async (e) => {
   submitBtn.disabled = true;
   submitBtn.textContent = 'Verifying…';
 
-  await new Promise(r => setTimeout(r, 600)); // brief pause for UX
+  try {
+    const res = await fetch('/.netlify/functions/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password })
+    });
 
-  if(username === 'mauldsstier' && password === 'password'){
-    sessionStorage.setItem('dc_auth', '1');
-    window.location.href = 'portal.html';
-  } else {
+    if(res.ok){
+      const { token } = await res.json();
+      sessionStorage.setItem('dc_token', token);
+      window.location.href = 'portal.html';
+    } else {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Proceed to Portal';
+      errorMsg.innerHTML = 'Invalid credentials. Please try again or contact <a href="mailto:ir@degen-capital.com">ir@degen-capital.com</a>.';
+      errorMsg.classList.add('visible');
+      document.getElementById('password').value = '';
+      document.getElementById('password').focus();
+    }
+  } catch(err) {
     submitBtn.disabled = false;
     submitBtn.textContent = 'Proceed to Portal';
-    errorMsg.innerHTML = 'Invalid credentials. Please try again or contact <a href="mailto:ir@degen-capital.com">ir@degen-capital.com</a>.';
+    errorMsg.textContent = 'Connection error. Please try again.';
     errorMsg.classList.add('visible');
-    document.getElementById('password').value = '';
-    document.getElementById('password').focus();
   }
 });
 </script>
