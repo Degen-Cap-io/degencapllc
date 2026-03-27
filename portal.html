@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Investor Portal — Degen Capital, LLC</title>
+<meta name="robots" content="noindex, nofollow" />
+<meta name="theme-color" content="#0b0d12" />
+<style>
+:root{
+  --bg:#0b0d12;
+  --text:#e9eaee;
+  --muted:#b7bcc9;
+  --line:#1a1f2b;
+  --overlay:rgba(5,7,12,.55);
+  --pad: clamp(16px, 5vw, 40px);
+  --nav-h: 60px;
+  --top-pad: max(10px, env(safe-area-inset-top));
+  --nav-visible-h: var(--nav-h);
+  --btn-h: 40px;
+}
+*,*::before,*::after{ box-sizing:border-box; }
+html,body{ height:100%; }
+body{
+  margin:0;
+  font-family: Palatino, "Palatino Linotype", "Book Antiqua", serif;
+  background:var(--bg);
+  color:var(--text);
+  line-height:1.45;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+.bg{ position:fixed; inset:0; width:100vw; height:100lvh; overflow:hidden; z-index:-2; }
+.bg video{ width:100%; height:100%; object-fit:cover; pointer-events:none; transform:translateZ(0); will-change:transform; }
+.bg::after{ content:""; position:absolute; inset:0; background:var(--overlay); pointer-events:none; z-index:0; }
+header{
+  position:fixed; top:0; left:0; right:0; z-index:20;
+  display:flex; align-items:center; justify-content:space-between;
+  padding: var(--top-pad) var(--pad) 8px var(--pad);
+  border-bottom: 1px solid color-mix(in oklab, var(--line), transparent 35%);
+}
+header::before{
+  content:""; position:absolute; inset:0;
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+  background: color-mix(in oklab, var(--bg), transparent 85%);
+  z-index:-1;
+}
+.brand{ display:flex; align-items:center; gap:12px; text-decoration:none; color:inherit; }
+.wordmark{ letter-spacing:.11em; font-weight:600; font-size:13px; text-transform:uppercase; line-height:1; }
+.logout-btn{
+  appearance:none; border:1px solid color-mix(in oklab, var(--line), transparent 20%);
+  background:transparent; color:var(--muted); cursor:pointer;
+  font-family:inherit; font-size:12px; letter-spacing:.14em; text-transform:uppercase;
+  padding:7px 14px; border-radius:8px;
+  transition: color .15s ease, background .15s ease;
+}
+.logout-btn:hover{ color:var(--text); background:rgba(255,255,255,.06); }
+main{
+  min-height:100svh;
+  display:flex; align-items:center; justify-content:center;
+  padding: calc(var(--nav-visible-h) + 32px) var(--pad) 48px;
+}
+.placeholder{
+  text-align:center;
+  opacity:.35;
+}
+.placeholder p{ font-size:14px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); margin:0; }
+footer{
+  padding:14px var(--pad); color:var(--muted); font-size:12px;
+  border-top:1px solid color-mix(in oklab, var(--line), transparent 35%);
+  background: color-mix(in oklab, var(--bg), transparent 85%);
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+}
+@media (prefers-reduced-motion: reduce){
+  *{ transition-duration:0.01ms !important; }
+  header{ -webkit-backdrop-filter:none; backdrop-filter:none; }
+}
+@media (prefers-reduced-data: reduce){
+  .bg video{ display:none; }
+  .bg{ background: url('assets/nyc-skyline.jpg') center/cover no-repeat; }
+}
+</style>
+</head>
+<body>
+
+<div class="bg" aria-hidden="true">
+  <video autoplay muted loop playsinline preload="metadata" poster="assets/nyc-skyline.jpg">
+    <source src="assets/nyc-night-loop.mp4" type="video/mp4" />
+  </video>
+</div>
+
+<header>
+  <a class="brand" href="index.html" aria-label="Degen Capital, LLC Home">
+    <svg width="32" height="32" viewBox="0 0 64 64" role="img" fill="none">
+      <rect x="1.5" y="1.5" width="61" height="61" rx="9" stroke="currentColor" stroke-width="3"/>
+      <path d="M18 16h10c10 0 18 8 18 16s-8 16-18 16H18V16z" stroke="currentColor" stroke-width="3" fill="none" stroke-linejoin="round"/>
+      <path d="M45 20.5c-3.5-3.5-7.5-5.5-12.5-5.5-9.5 0-17 7.5-17 17s7.5 17 17 17c5 0 9-2 12.5-5.5" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round"/>
+    </svg>
+    <div class="wordmark">Degen&nbsp;Capital&nbsp;LLC</div>
+  </a>
+  <button class="logout-btn" id="logoutBtn">Log Out</button>
+</header>
+
+<main>
+  <div class="placeholder">
+    <p>Portal content coming soon</p>
+  </div>
+</main>
+
+<footer>
+  For qualified investors only. Nothing herein constitutes an offer to sell or a solicitation to buy any security.<br />
+  © <span id="y"></span> Degen Capital, LLC. All rights reserved.
+</footer>
+
+<script>
+document.getElementById('y').textContent = new Date().getFullYear();
+
+// Guard: redirect to login if not authenticated
+if(sessionStorage.getItem('dc_auth') !== '1'){
+  window.location.replace('login.html');
+}
+
+document.getElementById('logoutBtn').addEventListener('click', () => {
+  sessionStorage.removeItem('dc_auth');
+  window.location.href = 'login.html';
+});
+
+// Header height var
+const headerEl = document.querySelector('header');
+function setHeaderVars(){
+  document.documentElement.style.setProperty('--nav-visible-h', Math.ceil(headerEl.getBoundingClientRect().height) + 'px');
+}
+setHeaderVars();
+window.addEventListener('resize', setHeaderVars);
+</script>
+</body>
+</html>

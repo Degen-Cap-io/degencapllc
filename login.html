@@ -361,14 +361,19 @@ form.addEventListener('submit', async (e) => {
   submitBtn.disabled = true;
   submitBtn.textContent = 'Verifying…';
 
-  // TODO: replace this block with your actual authentication call
-  // e.g. const res = await fetch('/api/login', { method:'POST', body: JSON.stringify({username, password}), headers:{'Content-Type':'application/json'} });
-  // For now, show an informational error pointing to IR contact
-  await new Promise(r => setTimeout(r, 800)); // simulate network
-  submitBtn.disabled = false;
-  submitBtn.textContent = 'Proceed to Portal';
-  errorMsg.innerHTML = 'Portal authentication is not yet configured. Please contact <a href="mailto:ir@degen-capital.com">ir@degen-capital.com</a> for access.';
-  errorMsg.classList.add('visible');
+  await new Promise(r => setTimeout(r, 600)); // brief pause for UX
+
+  if(username === 'mauldsstier' && password === 'password'){
+    sessionStorage.setItem('dc_auth', '1');
+    window.location.href = 'portal.html';
+  } else {
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Proceed to Portal';
+    errorMsg.innerHTML = 'Invalid credentials. Please try again or contact <a href="mailto:ir@degen-capital.com">ir@degen-capital.com</a>.';
+    errorMsg.classList.add('visible');
+    document.getElementById('password').value = '';
+    document.getElementById('password').focus();
+  }
 });
 </script>
 </body>
