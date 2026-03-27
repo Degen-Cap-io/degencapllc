@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Investor Portal — Degen Capital, LLC</title>
+<meta name="robots" content="noindex, nofollow" />
+<meta name="theme-color" content="#0b0d12" />
+<style>
+:root{
+  --bg:#0b0d12;
+  --text:#e9eaee;
+  --muted:#b7bcc9;
+  --line:#1a1f2b;
+  --overlay:rgba(5,7,12,.55);
+  --accent:#e9eaee;
+  --maxw:1080px;
+  --pad: clamp(16px, 5vw, 40px);
+  --lh: 1.45;
+  --radius: 12px;
+  --nav-h: 60px;
+  --focus:#94a3b8;
+  --top-pad: max(10px, env(safe-area-inset-top));
+  --nav-visible-h: var(--nav-h);
+  --btn-h: 40px;
+}
+
+*,*::before,*::after{ box-sizing:border-box; }
+html,body{ height:100%; }
+body{
+  margin:0;
+  font-family: Palatino, "Palatino Linotype", "Book Antiqua", serif;
+  background:var(--bg);
+  color:var(--text);
+  line-height:var(--lh);
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+  overflow-x:hidden;
+}
+
+.bg{ position:fixed; inset:0; width:100vw; height:100lvh; overflow:hidden; z-index:-2; }
+.bg video{ width:100%; height:100%; object-fit:cover; pointer-events:none; transform:translateZ(0); will-change:transform; }
+.bg::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background: var(--overlay);
+  pointer-events:none;
+  z-index:0;
+}
+
+header{
+  position:fixed; top:0; left:0; right:0; z-index:20;
+  display:flex; align-items:center; justify-content:space-between;
+  padding: var(--top-pad) var(--pad) 8px var(--pad);
+  height: auto;
+  background: transparent;
+  border-bottom: 1px solid color-mix(in oklab, var(--line), transparent 35%);
+  transform: translateY(0); opacity:1; pointer-events:auto;
+  transition: transform .2s ease, opacity .2s ease;
+}
+header::before{
+  content:"";
+  position:absolute; inset:0;
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  background: color-mix(in oklab, var(--bg), transparent 85%);
+  z-index:-1;
+}
+
+.brand{ display:flex; align-items:center; gap:12px; text-decoration:none; color:inherit; }
+.wordmark{ letter-spacing:.11em; font-weight:600; font-size:13px; text-transform:uppercase; line-height:1; }
+.logo{ width:32px; height:32px; display:block; flex-shrink:0; }
+
+.back-link{
+  font-size:13px;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  color:var(--muted);
+  text-decoration:none;
+  padding:8px 10px;
+  border-radius:6px;
+  transition: color .15s ease, background-color .15s ease;
+}
+.back-link:hover{ color:var(--text); background:rgba(255,255,255,.06); }
+
+/* ── Login card ── */
+main{
+  min-height:100svh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding: calc(var(--nav-visible-h) + 32px) var(--pad) 48px;
+}
+
+.login-card{
+  width:100%;
+  max-width:400px;
+  position:relative;
+}
+
+.login-card::before{
+  content:"";
+  position:absolute; inset:0;
+  border-radius:16px;
+  -webkit-backdrop-filter: saturate(1.1) blur(10px);
+  backdrop-filter: saturate(1.1) blur(10px);
+  background: rgba(11,13,18,0.55);
+  border: 1px solid color-mix(in oklab, var(--line), transparent 25%);
+  box-shadow:
+    0 8px 32px rgba(0,0,0,.45),
+    0 0 0 1px color-mix(in oklab, var(--line), transparent 60%) inset;
+  z-index:-1;
+}
+
+.login-inner{
+  padding: clamp(28px, 6vw, 44px);
+}
+
+.login-eyebrow{
+  font-size:11px;
+  letter-spacing:.22em;
+  text-transform:uppercase;
+  color:var(--muted);
+  margin:0 0 10px;
+}
+
+.login-title{
+  font-size: clamp(22px, 5vw, 30px);
+  font-weight:600;
+  margin:0 0 6px;
+  line-height:1.1;
+  letter-spacing:-.01em;
+}
+
+.login-sub{
+  font-size:13px;
+  color:var(--muted);
+  margin:0 0 32px;
+}
+
+/* Form */
+.field{
+  margin-bottom:18px;
+}
+.field label{
+  display:block;
+  font-size:11px;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:var(--muted);
+  margin-bottom:7px;
+}
+.field input{
+  width:100%;
+  background: rgba(255,255,255,.04);
+  border: 1px solid color-mix(in oklab, var(--line), transparent 20%);
+  border-radius:8px;
+  padding:11px 14px;
+  font-size:15px;
+  font-family: inherit;
+  color:var(--text);
+  outline:none;
+  transition: border-color .15s ease, background .15s ease;
+  -webkit-appearance:none;
+}
+.field input::placeholder{ color:color-mix(in oklab, var(--muted), transparent 45%); }
+.field input:focus{
+  border-color: color-mix(in oklab, var(--text), transparent 45%);
+  background: rgba(255,255,255,.07);
+}
+.field input:-webkit-autofill,
+.field input:-webkit-autofill:focus{
+  -webkit-box-shadow: 0 0 0 100px #141720 inset;
+  -webkit-text-fill-color: var(--text);
+  caret-color: var(--text);
+}
+
+.submit-btn{
+  display:block;
+  width:100%;
+  margin-top:26px;
+  padding:13px 16px;
+  background:transparent;
+  border:1px solid var(--text);
+  border-radius:8px;
+  color:#fff;
+  font-size:13px;
+  font-family:inherit;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  cursor:pointer;
+  position:relative;
+  isolation:isolate;
+  -webkit-transform:translateZ(0);
+  transform:translateZ(0);
+  transition: background .15s ease;
+  min-height:48px;
+}
+.submit-btn::before{
+  content:"";
+  position:absolute; inset:0;
+  border-radius:inherit;
+  background:rgba(11,13,18,0.01);
+  z-index:-1;
+}
+.submit-btn:hover{ background:#1a1f27; }
+.submit-btn:active{ background:#222836; }
+.submit-btn:focus-visible{
+  outline: 2px solid var(--focus);
+  outline-offset: 3px;
+}
+
+.login-footer{
+  margin-top:24px;
+  font-size:12px;
+  color:var(--muted);
+  text-align:center;
+  line-height:1.6;
+}
+.login-footer a{ color:var(--muted); text-decoration:underline; text-underline-offset:3px; }
+.login-footer a:hover{ color:var(--text); }
+
+/* Error message */
+.error-msg{
+  display:none;
+  background:rgba(200,50,50,.12);
+  border:1px solid rgba(200,50,50,.3);
+  border-radius:8px;
+  padding:10px 14px;
+  font-size:13px;
+  color:#f87171;
+  margin-bottom:18px;
+}
+.error-msg.visible{ display:block; }
+
+footer{
+  padding:14px var(--pad); color:var(--muted); font-size:12px; text-align:left;
+  border-top:1px solid color-mix(in oklab, var(--line), transparent 35%);
+  background: color-mix(in oklab, var(--bg), transparent 85%);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+}
+
+@media (prefers-reduced-motion: reduce){
+  *{ animation-duration:0.01ms !important; transition-duration:0.01ms !important; }
+  header, .login-card::before{ -webkit-backdrop-filter:none; backdrop-filter:none; }
+}
+@media (prefers-reduced-data: reduce){
+  .bg video{ display:none; }
+  .bg{ background: url('assets/nyc-skyline.jpg') center/cover no-repeat; }
+}
+</style>
+</head>
+<body>
+
+<div class="bg" aria-hidden="true">
+  <video autoplay muted loop playsinline preload="metadata" poster="assets/nyc-skyline.jpg">
+    <source src="assets/nyc-night-loop.mp4" type="video/mp4" />
+  </video>
+</div>
+
+<header>
+  <a class="brand" href="index.html" aria-label="Degen Capital, LLC Home">
+    <svg class="logo" width="32" height="32" viewBox="0 0 64 64" role="img" aria-labelledby="logoTitle2" fill="none">
+      <title id="logoTitle2">Degen Capital Monogram</title>
+      <rect x="1.5" y="1.5" width="61" height="61" rx="9" stroke="currentColor" stroke-width="3"/>
+      <path d="M18 16h10c10 0 18 8 18 16s-8 16-18 16H18V16z" stroke="currentColor" stroke-width="3" fill="none" stroke-linejoin="round"/>
+      <path d="M45 20.5c-3.5-3.5-7.5-5.5-12.5-5.5-9.5 0-17 7.5-17 17s7.5 17 17 17c5 0 9-2 12.5-5.5" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round"/>
+    </svg>
+    <div class="wordmark">Degen&nbsp;Capital&nbsp;LLC</div>
+  </a>
+  <a class="back-link" href="index.html">← Back</a>
+</header>
+
+<main>
+  <div class="login-card">
+    <div class="login-inner">
+      <p class="login-eyebrow">Investor Portal</p>
+      <h1 class="login-title">Secure Login</h1>
+      <p class="login-sub">Authorized investors only.</p>
+
+      <div class="error-msg" id="errorMsg" role="alert" aria-live="polite">
+        Invalid credentials. Please try again or contact <a href="mailto:ir@degen-capital.com">ir@degen-capital.com</a>.
+      </div>
+
+      <form id="loginForm" novalidate>
+        <div class="field">
+          <label for="username">Username</label>
+          <input
+            type="text"
+            id="username"
+            name="username"
+            autocomplete="username"
+            placeholder="Enter your username"
+            required
+            spellcheck="false"
+            autocorrect="off"
+            autocapitalize="off"
+          />
+        </div>
+        <div class="field">
+          <label for="password">Password</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            autocomplete="current-password"
+            placeholder="Enter your password"
+            required
+          />
+        </div>
+
+        <button type="submit" class="submit-btn" id="submitBtn">
+          Proceed to Portal
+        </button>
+      </form>
+
+      <p class="login-footer">
+        Need access? Contact&nbsp;<a href="mailto:ir@degen-capital.com">ir@degen-capital.com</a>
+      </p>
+    </div>
+  </div>
+</main>
+
+<footer>
+  For qualified investors only. Nothing herein constitutes an offer to sell or a solicitation to buy any security.<br />
+  © <span id="y"></span> Degen Capital, LLC. All rights reserved.
+</footer>
+
+<script>
+document.getElementById('y').textContent = new Date().getFullYear();
+
+// Keep header height var in sync
+const headerEl = document.querySelector('header');
+function setHeaderVars(){
+  const h = Math.ceil(headerEl.getBoundingClientRect().height);
+  document.documentElement.style.setProperty('--nav-visible-h', h + 'px');
+}
+setHeaderVars();
+window.addEventListener('resize', setHeaderVars);
+
+// Form submit — wire up to your own backend/auth endpoint as needed
+const form = document.getElementById('loginForm');
+const errorMsg = document.getElementById('errorMsg');
+const submitBtn = document.getElementById('submitBtn');
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  errorMsg.classList.remove('visible');
+
+  const username = document.getElementById('username').value.trim();
+  const password = document.getElementById('password').value;
+
+  if(!username || !password){
+    errorMsg.textContent = 'Please enter your username and password.';
+    errorMsg.classList.add('visible');
+    return;
+  }
+
+  submitBtn.disabled = true;
+  submitBtn.textContent = 'Verifying…';
+
+  // TODO: replace this block with your actual authentication call
+  // e.g. const res = await fetch('/api/login', { method:'POST', body: JSON.stringify({username, password}), headers:{'Content-Type':'application/json'} });
+  // For now, show an informational error pointing to IR contact
+  await new Promise(r => setTimeout(r, 800)); // simulate network
+  submitBtn.disabled = false;
+  submitBtn.textContent = 'Proceed to Portal';
+  errorMsg.innerHTML = 'Portal authentication is not yet configured. Please contact <a href="mailto:ir@degen-capital.com">ir@degen-capital.com</a> for access.';
+  errorMsg.classList.add('visible');
+});
+</script>
+</body>
+</html>
