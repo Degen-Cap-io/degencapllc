@@ -23,15 +23,14 @@ exports.handler = async (event) => {
     return { statusCode: 500, body: 'Server configuration error' };
   }
 
-  // Constant-time comparison to prevent timing attacks
-  const userMatch = crypto.timingSafeEqual(
-    Buffer.from(username || ''),
-    Buffer.from(validUser)
-  );
-  const passMatch = crypto.timingSafeEqual(
-    Buffer.from(password || ''),
-    Buffer.from(validPass)
-  );
+  // Constant-time comparison (pad to same length to avoid throws on mismatch)
+  const u1 = Buffer.from((username || '').padEnd(64));
+  const u2 = Buffer.from(validUser.padEnd(64));
+  const p1 = Buffer.from((password || '').padEnd(64));
+  const p2 = Buffer.from(validPass.padEnd(64));
+
+  const userMatch = crypto.timingSafeEqual(u1, u2) && (username || '').length === validUser.length;
+  const passMatch = crypto.timingSafeEqual(p1, p2) && (password || '').length === validPass.length;
 
   if (!userMatch || !passMatch) {
     return {
